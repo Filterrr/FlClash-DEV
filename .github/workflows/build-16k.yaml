@@ -61,7 +61,7 @@ jobs:
           submodules: recursive
           fetch-depth: 1
 
-      - name: Setup Java 17
+      - name: Setup Java
         if: matrix.is_android == true
         uses: actions/setup-java@v5
         with:
