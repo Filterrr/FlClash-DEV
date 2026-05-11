@@ -61,13 +61,12 @@ jobs:
           submodules: recursive
           fetch-depth: 1
 
-      - name: Setup Java 17
+      - name: Setup Java
         if: matrix.is_android == true
         uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
-          # 修改缓存路径以强制清除旧缓存
           cache: 'gradle'
 
       - name: Setup NDK
