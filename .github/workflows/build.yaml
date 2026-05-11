@@ -64,6 +64,11 @@ jobs:
           cache-dependency-path: |
             core/go.sum
 
+      - name: Update Go Dependencies
+        run: |
+          cd core
+          go mod tidy
+
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
