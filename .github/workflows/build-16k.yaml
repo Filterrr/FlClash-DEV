@@ -66,8 +66,7 @@ jobs:
         uses: actions/setup-java@v5
         with:
           distribution: temurin
-          java-version: '17'
-          # 修改缓存路径以强制清除旧缓存
+          java-version: '21'
           cache: 'gradle'
 
       - name: Setup NDK
