@@ -145,7 +145,7 @@ class _$TunImpl implements _Tun {
       this.device = appName,
       this.stack = TunStack.gvisor,
       @JsonKey(name: "dns-hijack")
-      final List<String> dnsHijack = const ["any:53"]})
+      final List<String> dnsHijack = const ["any:53", "tcp://any:53"]})
       : _dnsHijack = dnsHijack;
 
   factory _$TunImpl.fromJson(Map<String, dynamic> json) =>
