@@ -20,7 +20,7 @@ jobs:
         include:
           # --- Android 平台合并 ---
           - platform: android
-            os: ubuntu-24.04
+            os: ubuntu-latest
             arch: universal
             is_android: true
             go_version: '1.25.x'
@@ -28,13 +28,13 @@ jobs:
 
           # --- Windows 平台 ---
           - platform: windows
-            os: windows-2022
+            os: windows-latest
             arch: amd64
             go_version: '1.25.x'
             flutter_channel: 'stable'
             flutter_version: '3.38.10'
           - platform: windows
-            os: windows-2022
+            os: windows-latest
             arch: arm64
             go_version: '1.25.x'
             flutter_channel: 'stable'
@@ -42,13 +42,13 @@ jobs:
 
           # --- macOS 平台 ---
           - platform: macos
-            os: macos-15
+            os: macos-latest
             arch: arm64
             go_version: '1.25.x'
             flutter_channel: 'stable'
             flutter_version: '3.38.10'
           - platform: macos
-            os: macos-15
+            os: macos-latest
             arch: amd64
             go_version: '1.25.x'
             flutter_channel: 'stable'
