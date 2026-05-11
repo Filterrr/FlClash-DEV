@@ -15,7 +15,6 @@ import (
 	"github.com/metacubex/mihomo/hub/executor"
 	"github.com/metacubex/mihomo/listener"
 	"github.com/metacubex/mihomo/log"
-	"github.com/metacubex/mihomo/tunnel"
 	"github.com/metacubex/mihomo/tunnel/statistic"
 	"runtime"
 	"sort"
@@ -100,7 +99,7 @@ func handleUpdateConfig(bytes []byte) string {
 func handleGetProxies() string {
 	runLock.Lock()
 	defer runLock.Unlock()
-	data, err := json.Marshal(tunnel.ProxiesWithProviders())
+	data, err := json.Marshal(proxiesWithProviders())
 	if err != nil {
 		return ""
 	}
@@ -119,7 +118,7 @@ func handleChangeProxy(data string, fn func(string string)) {
 		}
 		groupName := *params.GroupName
 		proxyName := *params.ProxyName
-		proxies := tunnel.ProxiesWithProviders()
+		proxies := proxiesWithProviders()
 		group, ok := proxies[groupName]
 		if !ok {
 			fn("Not found group")
@@ -147,7 +146,7 @@ func handleChangeProxy(data string, fn func(string string)) {
 }
 
 func handleGetTraffic(onlyProxy bool) string {
-	up, down := statistic.DefaultManager.Current(onlyProxy)
+	up, down := statistic.DefaultManager.NowTraffic(onlyProxy)
 	traffic := map[string]int64{
 		"up":   up,
 		"down": down,
@@ -161,7 +160,7 @@ func handleGetTraffic(onlyProxy bool) string {
 }
 
 func handleGetTotalTraffic(onlyProxy bool) string {
-	up, down := statistic.DefaultManager.Total(onlyProxy)
+	up, down := statistic.DefaultManager.TotalTraffic(onlyProxy)
 	traffic := map[string]int64{
 		"up":   up,
 		"down": down,
@@ -196,7 +195,7 @@ func handleAsyncTestDelay(paramsString string, fn func(string)) {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*time.Duration(params.Timeout))
 		defer cancel()
 
-		proxies := tunnel.ProxiesWithProviders()
+		proxies := proxiesWithProviders()
 		proxy := proxies[params.ProxyName]
 
 		delayData := &Delay{
@@ -405,7 +404,7 @@ func handleStopLog() {
 }
 
 func init() {
-	adapter.UrlTestHook = func(name string, delay uint16) {
+	adapter.UrlTestHook = func(url string, name string, delay uint16) {
 		delayData := &Delay{
 			Name: name,
 		}

@@ -316,12 +316,27 @@ func stopListeners() {
 	listener.StopListener()
 }
 
+func proxiesWithProviders() map[string]constant.Proxy {
+	result := make(map[string]constant.Proxy)
+	for name, proxy := range tunnel.Proxies() {
+		result[name] = proxy
+	}
+	for _, pd := range tunnel.Providers() {
+		for _, proxy := range pd.Proxies() {
+			if _, exists := result[proxy.Name()]; !exists {
+				result[proxy.Name()] = proxy
+			}
+		}
+	}
+	return result
+}
+
 func patchSelectGroup() {
 	mapping := configParams.SelectedMap
 	if mapping == nil {
 		return
 	}
-	for name, proxy := range tunnel.ProxiesWithProviders() {
+	for name, proxy := range proxiesWithProviders() {
 		outbound, ok := proxy.(*adapter.Proxy)
 		if !ok {
 			continue
