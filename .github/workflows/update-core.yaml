@@ -123,16 +123,16 @@ jobs:
           echo "## Update Log" > /tmp/update_log.md
           git log --oneline ${{ needs.check-update.outputs.old_commit }}..HEAD >> /tmp/update_log.md
 
-      - name: Update Go Dependencies
-        run: |
-          cd core
-          go mod tidy
-
       - name: Setup Go
         uses: actions/setup-go@v6
         with:
           go-version: '1.25.x'
           cache: false
+
+      - name: Update Go Dependencies
+        run: |
+          cd core
+          go mod tidy
 
       - name: Download Go Dependencies
         run: |
