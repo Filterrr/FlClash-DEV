@@ -41,6 +41,11 @@ jobs:
             arch: amd64
             go_version: '1.25.x'
             flutter_channel: 'stable'
+          - platform: linux
+            os: ubuntu-latest
+            arch: arm64
+            go_version: '1.25.x'
+            flutter_channel: 'stable'
 
           - platform: macos
             os: macos-latest
