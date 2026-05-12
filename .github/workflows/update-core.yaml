@@ -8,13 +8,13 @@ on:
         required: false
         default: ''
       branch:
-        description: 'Target branch to update (default: Alpha, ignored if commit is provided)'
+        description: 'Target branch to update (default: Meta, ignored if commit is provided)'
         required: false
-        default: 'Alpha'
+        default: 'Meta'
 
 env:
   SUBMODULE_PATH: core/Clash.Meta
-  DEFAULT_BRANCH: Alpha
+  DEFAULT_BRANCH: Meta
 
 jobs:
   check-update:
