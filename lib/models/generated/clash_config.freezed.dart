@@ -25,6 +25,8 @@ mixin _$Tun {
   TunStack get stack => throw _privateConstructorUsedError;
   @JsonKey(name: "dns-hijack")
   List<String> get dnsHijack => throw _privateConstructorUsedError;
+  @JsonKey(name: "disable-icmp-forwarding")
+  bool get disableIcmpForwarding => throw _privateConstructorUsedError;
 
   /// Serializes this Tun to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -44,7 +46,8 @@ abstract class $TunCopyWith<$Res> {
       {bool enable,
       String device,
       TunStack stack,
-      @JsonKey(name: "dns-hijack") List<String> dnsHijack});
+      @JsonKey(name: "dns-hijack") List<String> dnsHijack,
+      @JsonKey(name: "disable-icmp-forwarding") bool disableIcmpForwarding});
 }
 
 /// @nodoc
@@ -65,6 +68,7 @@ class _$TunCopyWithImpl<$Res, $Val extends Tun> implements $TunCopyWith<$Res> {
     Object? device = null,
     Object? stack = null,
     Object? dnsHijack = null,
+    Object? disableIcmpForwarding = null,
   }) {
     return _then(_value.copyWith(
       enable: null == enable
@@ -83,6 +87,10 @@ class _$TunCopyWithImpl<$Res, $Val extends Tun> implements $TunCopyWith<$Res> {
           ? _value.dnsHijack
           : dnsHijack // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      disableIcmpForwarding: null == disableIcmpForwarding
+          ? _value.disableIcmpForwarding
+          : disableIcmpForwarding // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 }
@@ -97,7 +105,8 @@ abstract class _$$TunImplCopyWith<$Res> implements $TunCopyWith<$Res> {
       {bool enable,
       String device,
       TunStack stack,
-      @JsonKey(name: "dns-hijack") List<String> dnsHijack});
+      @JsonKey(name: "dns-hijack") List<String> dnsHijack,
+      @JsonKey(name: "disable-icmp-forwarding") bool disableIcmpForwarding});
 }
 
 /// @nodoc
@@ -115,6 +124,7 @@ class __$$TunImplCopyWithImpl<$Res> extends _$TunCopyWithImpl<$Res, _$TunImpl>
     Object? device = null,
     Object? stack = null,
     Object? dnsHijack = null,
+    Object? disableIcmpForwarding = null,
   }) {
     return _then(_$TunImpl(
       enable: null == enable
@@ -133,6 +143,10 @@ class __$$TunImplCopyWithImpl<$Res> extends _$TunCopyWithImpl<$Res, _$TunImpl>
           ? _value._dnsHijack
           : dnsHijack // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      disableIcmpForwarding: null == disableIcmpForwarding
+          ? _value.disableIcmpForwarding
+          : disableIcmpForwarding // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -145,7 +159,9 @@ class _$TunImpl implements _Tun {
       this.device = appName,
       this.stack = TunStack.gvisor,
       @JsonKey(name: "dns-hijack")
-      final List<String> dnsHijack = const ["any:53", "tcp://any:53"]})
+      final List<String> dnsHijack = const ["any:53", "tcp://any:53"],
+      @JsonKey(name: "disable-icmp-forwarding")
+      this.disableIcmpForwarding = false})
       : _dnsHijack = dnsHijack;
 
   factory _$TunImpl.fromJson(Map<String, dynamic> json) =>
@@ -170,8 +186,12 @@ class _$TunImpl implements _Tun {
   }
 
   @override
+  @JsonKey(name: "disable-icmp-forwarding")
+  final bool disableIcmpForwarding;
+
+  @override
   String toString() {
-    return 'Tun(enable: $enable, device: $device, stack: $stack, dnsHijack: $dnsHijack)';
+    return 'Tun(enable: $enable, device: $device, stack: $stack, dnsHijack: $dnsHijack, disableIcmpForwarding: $disableIcmpForwarding)';
   }
 
   @override
@@ -183,13 +203,20 @@ class _$TunImpl implements _Tun {
             (identical(other.device, device) || other.device == device) &&
             (identical(other.stack, stack) || other.stack == stack) &&
             const DeepCollectionEquality()
-                .equals(other._dnsHijack, _dnsHijack));
+                .equals(other._dnsHijack, _dnsHijack) &&
+            (identical(other.disableIcmpForwarding, disableIcmpForwarding) ||
+                other.disableIcmpForwarding == disableIcmpForwarding));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, enable, device, stack,
-      const DeepCollectionEquality().hash(_dnsHijack));
+  int get hashCode => Object.hash(
+      runtimeType,
+      enable,
+      device,
+      stack,
+      const DeepCollectionEquality().hash(_dnsHijack),
+      disableIcmpForwarding);
 
   /// Create a copy of Tun
   /// with the given fields replaced by the non-null parameter values.
@@ -212,7 +239,8 @@ abstract class _Tun implements Tun {
       {final bool enable,
       final String device,
       final TunStack stack,
-      @JsonKey(name: "dns-hijack") final List<String> dnsHijack}) = _$TunImpl;
+      @JsonKey(name: "dns-hijack") final List<String> dnsHijack,
+      @JsonKey(name: "disable-icmp-forwarding") final bool disableIcmpForwarding}) = _$TunImpl;
 
   factory _Tun.fromJson(Map<String, dynamic> json) = _$TunImpl.fromJson;
 
@@ -225,6 +253,9 @@ abstract class _Tun implements Tun {
   @override
   @JsonKey(name: "dns-hijack")
   List<String> get dnsHijack;
+  @override
+  @JsonKey(name: "disable-icmp-forwarding")
+  bool get disableIcmpForwarding;
 
   /// Create a copy of Tun
   /// with the given fields replaced by the non-null parameter values.

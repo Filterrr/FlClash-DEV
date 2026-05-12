@@ -232,6 +232,7 @@ func overwriteConfig(targetConfig *config.RawConfig, patchConfig config.RawConfi
 	targetConfig.Tun.Device = patchConfig.Tun.Device
 	targetConfig.Tun.DNSHijack = patchConfig.Tun.DNSHijack
 	targetConfig.Tun.Stack = patchConfig.Tun.Stack
+	targetConfig.Tun.DisableICMPForwarding = patchConfig.Tun.DisableICMPForwarding
 	targetConfig.GeodataLoader = patchConfig.GeodataLoader
 	targetConfig.Profile.StoreSelected = false
 	targetConfig.GeoXUrl = patchConfig.GeoXUrl

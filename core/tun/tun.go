@@ -46,16 +46,17 @@ func Start(fd int, device string, stack constant.TUNStack) (*sing_tun.Listener, 
 	dnsHijack = append(dnsHijack, net.JoinHostPort(state.GetDnsServerAddress(), "53"))
 
 	options := LC.Tun{
-		Enable:              true,
-		Device:              device,
-		Stack:               stack,
-		DNSHijack:           dnsHijack,
-		AutoRoute:           false,
-		AutoDetectInterface: false,
-		Inet4Address:        prefix4,
-		Inet6Address:        prefix6,
-		MTU:                 9000,
-		FileDescriptor:      fd,
+		Enable:                true,
+		Device:                device,
+		Stack:                 stack,
+		DNSHijack:             dnsHijack,
+		AutoRoute:             false,
+		AutoDetectInterface:   false,
+		Inet4Address:          prefix4,
+		Inet6Address:          prefix6,
+		MTU:                   9000,
+		FileDescriptor:        fd,
+		DisableICMPForwarding: state.CurrentState.DisableICMPForwarding,
 	}
 
 	listener, err := sing_tun.New(options, tunnel.Tunnel)

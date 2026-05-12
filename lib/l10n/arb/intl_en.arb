@@ -332,5 +332,7 @@
   "routeAddress": "Route address",
   "routeAddressDesc": "Config listen route address",
   "pleaseInputAdminPassword": "Please enter the admin password",
-  "copyEnvVar": "Copying environment variables"
+  "copyEnvVar": "Copying environment variables",
+  "disableIcmpForwarding": "Disable ICMP forwarding",
+  "disableIcmpForwardingDesc": "Prevent ICMP loopback issues, ping will not show real latency"
 }

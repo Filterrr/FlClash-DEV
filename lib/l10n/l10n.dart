@@ -3389,6 +3389,26 @@ class AppLocalizations {
       args: [],
     );
   }
+
+  /// `Disable ICMP forwarding`
+  String get disableIcmpForwarding {
+    return Intl.message(
+      'Disable ICMP forwarding',
+      name: 'disableIcmpForwarding',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Prevent ICMP loopback issues, ping will not show real latency`
+  String get disableIcmpForwardingDesc {
+    return Intl.message(
+      'Prevent ICMP loopback issues, ping will not show real latency',
+      name: 'disableIcmpForwardingDesc',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {

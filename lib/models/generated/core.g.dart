@@ -24,6 +24,7 @@ _$CoreStateImpl _$$CoreStateImplFromJson(Map<String, dynamic> json) =>
           .toList(),
       ipv6: json['ipv6'] as bool,
       onlyProxy: json['onlyProxy'] as bool,
+      disableIcmpForwarding: json['disableIcmpForwarding'] as bool,
     );
 
 Map<String, dynamic> _$$CoreStateImplToJson(_$CoreStateImpl instance) =>
@@ -37,6 +38,7 @@ Map<String, dynamic> _$$CoreStateImplToJson(_$CoreStateImpl instance) =>
       'routeAddress': instance.routeAddress,
       'ipv6': instance.ipv6,
       'onlyProxy': instance.onlyProxy,
+      'disableIcmpForwarding': instance.disableIcmpForwarding,
     };
 
 _$AndroidVpnOptionsImpl _$$AndroidVpnOptionsImplFromJson(

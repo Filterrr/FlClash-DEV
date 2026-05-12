@@ -29,6 +29,8 @@ mixin _$CoreState {
   List<String> get routeAddress => throw _privateConstructorUsedError;
   bool get ipv6 => throw _privateConstructorUsedError;
   bool get onlyProxy => throw _privateConstructorUsedError;
+  @JsonKey(name: "disableIcmpForwarding")
+  bool get disableIcmpForwarding => throw _privateConstructorUsedError;
 
   /// Serializes this CoreState to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -54,7 +56,8 @@ abstract class $CoreStateCopyWith<$Res> {
       List<String> bypassDomain,
       List<String> routeAddress,
       bool ipv6,
-      bool onlyProxy});
+      bool onlyProxy,
+      @JsonKey(name: "disableIcmpForwarding") bool disableIcmpForwarding});
 
   $AccessControlCopyWith<$Res>? get accessControl;
 }
@@ -83,6 +86,7 @@ class _$CoreStateCopyWithImpl<$Res, $Val extends CoreState>
     Object? routeAddress = null,
     Object? ipv6 = null,
     Object? onlyProxy = null,
+    Object? disableIcmpForwarding = null,
   }) {
     return _then(_value.copyWith(
       enable: null == enable
@@ -121,6 +125,10 @@ class _$CoreStateCopyWithImpl<$Res, $Val extends CoreState>
           ? _value.onlyProxy
           : onlyProxy // ignore: cast_nullable_to_non_nullable
               as bool,
+      disableIcmpForwarding: null == disableIcmpForwarding
+          ? _value.disableIcmpForwarding
+          : disableIcmpForwarding // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 
@@ -156,7 +164,8 @@ abstract class _$$CoreStateImplCopyWith<$Res>
       List<String> bypassDomain,
       List<String> routeAddress,
       bool ipv6,
-      bool onlyProxy});
+      bool onlyProxy,
+      @JsonKey(name: "disableIcmpForwarding") bool disableIcmpForwarding});
 
   @override
   $AccessControlCopyWith<$Res>? get accessControl;
@@ -184,6 +193,7 @@ class __$$CoreStateImplCopyWithImpl<$Res>
     Object? routeAddress = null,
     Object? ipv6 = null,
     Object? onlyProxy = null,
+    Object? disableIcmpForwarding = null,
   }) {
     return _then(_$CoreStateImpl(
       enable: null == enable
@@ -222,6 +232,10 @@ class __$$CoreStateImplCopyWithImpl<$Res>
           ? _value.onlyProxy
           : onlyProxy // ignore: cast_nullable_to_non_nullable
               as bool,
+      disableIcmpForwarding: null == disableIcmpForwarding
+          ? _value.disableIcmpForwarding
+          : disableIcmpForwarding // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -238,7 +252,9 @@ class _$CoreStateImpl implements _CoreState {
       required final List<String> bypassDomain,
       required final List<String> routeAddress,
       required this.ipv6,
-      required this.onlyProxy})
+      required this.onlyProxy,
+      @JsonKey(name: "disableIcmpForwarding")
+      required this.disableIcmpForwarding})
       : _bypassDomain = bypassDomain,
         _routeAddress = routeAddress;
 
@@ -275,10 +291,13 @@ class _$CoreStateImpl implements _CoreState {
   final bool ipv6;
   @override
   final bool onlyProxy;
+  @override
+  @JsonKey(name: "disableIcmpForwarding")
+  final bool disableIcmpForwarding;
 
   @override
   String toString() {
-    return 'CoreState(enable: $enable, accessControl: $accessControl, currentProfileName: $currentProfileName, allowBypass: $allowBypass, systemProxy: $systemProxy, bypassDomain: $bypassDomain, routeAddress: $routeAddress, ipv6: $ipv6, onlyProxy: $onlyProxy)';
+    return 'CoreState(enable: $enable, accessControl: $accessControl, currentProfileName: $currentProfileName, allowBypass: $allowBypass, systemProxy: $systemProxy, bypassDomain: $bypassDomain, routeAddress: $routeAddress, ipv6: $ipv6, onlyProxy: $onlyProxy, disableIcmpForwarding: $disableIcmpForwarding)';
   }
 
   @override
@@ -301,7 +320,9 @@ class _$CoreStateImpl implements _CoreState {
                 .equals(other._routeAddress, _routeAddress) &&
             (identical(other.ipv6, ipv6) || other.ipv6 == ipv6) &&
             (identical(other.onlyProxy, onlyProxy) ||
-                other.onlyProxy == onlyProxy));
+                other.onlyProxy == onlyProxy) &&
+            (identical(other.disableIcmpForwarding, disableIcmpForwarding) ||
+                other.disableIcmpForwarding == disableIcmpForwarding));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -316,7 +337,8 @@ class _$CoreStateImpl implements _CoreState {
       const DeepCollectionEquality().hash(_bypassDomain),
       const DeepCollectionEquality().hash(_routeAddress),
       ipv6,
-      onlyProxy);
+      onlyProxy,
+      disableIcmpForwarding);
 
   /// Create a copy of CoreState
   /// with the given fields replaced by the non-null parameter values.
@@ -344,7 +366,9 @@ abstract class _CoreState implements CoreState {
       required final List<String> bypassDomain,
       required final List<String> routeAddress,
       required final bool ipv6,
-      required final bool onlyProxy}) = _$CoreStateImpl;
+      required final bool onlyProxy,
+      @JsonKey(name: "disableIcmpForwarding")
+      required final bool disableIcmpForwarding}) = _$CoreStateImpl;
 
   factory _CoreState.fromJson(Map<String, dynamic> json) =
       _$CoreStateImpl.fromJson;
@@ -367,6 +391,9 @@ abstract class _CoreState implements CoreState {
   bool get ipv6;
   @override
   bool get onlyProxy;
+  @override
+  @JsonKey(name: "disableIcmpForwarding")
+  bool get disableIcmpForwarding;
 
   /// Create a copy of CoreState
   /// with the given fields replaced by the non-null parameter values.

@@ -200,6 +200,7 @@ class GlobalState {
           routeAddress: clashConfig.routeAddress,
           currentProfileName:
               config.currentProfile?.label ?? config.currentProfileId ?? "",
+          disableIcmpForwarding: clashConfig.tun.disableIcmpForwarding,
         ),
       );
     }

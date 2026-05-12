@@ -201,6 +201,32 @@ class TunStackItem extends StatelessWidget {
   }
 }
 
+class DisableICMPForwardingItem extends StatelessWidget {
+  const DisableICMPForwardingItem({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Selector<ClashConfig, bool>(
+      selector: (_, clashConfig) => clashConfig.tun.disableIcmpForwarding,
+      builder: (_, disableIcmpForwarding, __) {
+        return ListItem.switchItem(
+          title: Text(appLocalizations.disableIcmpForwarding),
+          subtitle: Text(appLocalizations.disableIcmpForwardingDesc),
+          delegate: SwitchDelegate(
+            value: disableIcmpForwarding,
+            onChanged: (value) async {
+              final clashConfig = globalState.appController.clashConfig;
+              clashConfig.tun = clashConfig.tun.copyWith(
+                disableIcmpForwarding: value,
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+}
+
 class BypassDomainItem extends StatelessWidget {
   const BypassDomainItem({super.key});
 
@@ -367,6 +393,7 @@ final networkItems = [
     items: [
       if (system.isDesktop) const TUNItem(),
       const TunStackItem(),
+      const DisableICMPForwardingItem(),
       const RouteModeItem(),
       const RouteAddressItem(),
     ],
