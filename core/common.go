@@ -11,10 +11,10 @@ import (
 	"github.com/metacubex/mihomo/adapter/provider"
 	"github.com/metacubex/mihomo/common/batch"
 	"github.com/metacubex/mihomo/component/dialer"
+	"github.com/metacubex/mihomo/component/profile/cachefile"
 	"github.com/metacubex/mihomo/component/resolver"
 	"github.com/metacubex/mihomo/config"
 	"github.com/metacubex/mihomo/constant"
-	"github.com/metacubex/mihomo/constant/features"
 	cp "github.com/metacubex/mihomo/constant/provider"
 	"github.com/metacubex/mihomo/hub"
 	"github.com/metacubex/mihomo/hub/route"
@@ -31,10 +31,11 @@ import (
 )
 
 var (
-	isRunning = false
-	runLock   sync.Mutex
-	ips       = []string{"ipinfo.io", "ipapi.co", "api.ip.sb", "ipwho.is"}
-	b, _      = batch.New[bool](context.Background(), batch.WithConcurrencyNum[bool](50))
+	isRunning     = false
+	runLock       sync.Mutex
+	ips           = []string{"ipinfo.io", "ipapi.co", "api.ip.sb", "ipwho.is"}
+	b, _          = batch.New[bool](context.Background(), batch.WithConcurrencyNum[bool](50))
+	testURL       = constant.DefaultTestURL
 )
 
 type ExternalProviders []ExternalProvider
@@ -126,6 +127,10 @@ func toExternalProvider(p cp.Provider) (*ExternalProvider, error) {
 	switch p.(type) {
 	case *provider.ProxySetProvider:
 		psp := p.(*provider.ProxySetProvider)
+		var subInfo *provider.SubscriptionInfo
+		if info := cachefile.Cache().GetSubscriptionInfo(psp.Name()); info != "" {
+			subInfo = provider.NewSubscriptionInfo(info)
+		}
 		return &ExternalProvider{
 			Name:             psp.Name(),
 			Type:             psp.Type().String(),
@@ -133,7 +138,7 @@ func toExternalProvider(p cp.Provider) (*ExternalProvider, error) {
 			Count:            psp.Count(),
 			UpdateAt:         psp.UpdatedAt(),
 			Path:             psp.Vehicle().Path(),
-			SubscriptionInfo: psp.GetSubscriptionInfo(),
+			SubscriptionInfo: subInfo,
 		}, nil
 	case *rp.RuleSetProvider:
 		rsp := p.(*rp.RuleSetProvider)
@@ -237,7 +242,7 @@ func overwriteConfig(targetConfig *config.RawConfig, patchConfig config.RawConfi
 	targetConfig.GeoXUrl = patchConfig.GeoXUrl
 	targetConfig.GlobalUA = patchConfig.GlobalUA
 	if configParams.TestURL != nil {
-		constant.DefaultTestURL = *configParams.TestURL
+		testURL = *configParams.TestURL
 	}
 	for idx := range targetConfig.ProxyGroup {
 		targetConfig.ProxyGroup[idx]["url"] = ""
@@ -307,13 +312,13 @@ func updateListeners(force bool) {
 	listener.ReCreateShadowSocks(general.ShadowSocksConfig, tunnel.Tunnel)
 	listener.ReCreateVmess(general.VmessConfig, tunnel.Tunnel)
 	listener.ReCreateTuic(general.TuicServer, tunnel.Tunnel)
-	if !features.Android {
+	if runtime.GOOS != "android" {
 		listener.ReCreateTun(general.Tun, tunnel.Tunnel)
 	}
 }
 
 func stopListeners() {
-	listener.StopListener()
+	listener.Cleanup()
 }
 
 func proxiesWithProviders() map[string]constant.Proxy {
