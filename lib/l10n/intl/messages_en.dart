@@ -145,6 +145,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "desc": MessageLookupByLibrary.simpleMessage(
             "A multi-platform proxy client based on ClashMeta, simple and easy to use, open-source and ad-free."),
         "direct": MessageLookupByLibrary.simpleMessage("Direct"),
+        "disableIcmpForwarding": MessageLookupByLibrary.simpleMessage(
+            "Disable ICMP forwarding"),
+        "disableIcmpForwardingDesc": MessageLookupByLibrary.simpleMessage(
+            "Prevent ICMP loopback issues, ping will not show real latency"),
         "disclaimer": MessageLookupByLibrary.simpleMessage("Disclaimer"),
         "disclaimerDesc": MessageLookupByLibrary.simpleMessage(
             "This software is only used for non-commercial purposes such as learning exchanges and scientific research. It is strictly prohibited to use this software for commercial purposes. Any commercial activity, if any, has nothing to do with this software."),

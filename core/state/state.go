@@ -27,13 +27,14 @@ type AccessControl struct {
 }
 
 type AndroidVpnRawOptions struct {
-	Enable        bool           `json:"enable"`
-	AccessControl *AccessControl `json:"accessControl"`
-	AllowBypass   bool           `json:"allowBypass"`
-	SystemProxy   bool           `json:"systemProxy"`
-	RouteAddress  []string       `json:"routeAddress"`
-	Ipv6          bool           `json:"ipv6"`
-	BypassDomain  []string       `json:"bypassDomain"`
+	Enable                  bool           `json:"enable"`
+	AccessControl           *AccessControl `json:"accessControl"`
+	AllowBypass             bool           `json:"allowBypass"`
+	SystemProxy             bool           `json:"systemProxy"`
+	RouteAddress            []string       `json:"routeAddress"`
+	Ipv6                    bool           `json:"ipv6"`
+	BypassDomain            []string       `json:"bypassDomain"`
+	DisableICMPForwarding   bool           `json:"disableIcmpForwarding"`
 }
 
 type State struct {

@@ -119,6 +119,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "desc": MessageLookupByLibrary.simpleMessage(
             "基于ClashMeta的多平台代理客户端，简单易用，开源无广告。"),
         "direct": MessageLookupByLibrary.simpleMessage("直连"),
+        "disableIcmpForwarding": MessageLookupByLibrary.simpleMessage(
+            "禁用 ICMP 转发"),
+        "disableIcmpForwardingDesc": MessageLookupByLibrary.simpleMessage(
+            "防止某些情况下的 ICMP 环回问题，ping 将不会显示真实的延迟"),
         "disclaimer": MessageLookupByLibrary.simpleMessage("免责声明"),
         "disclaimerDesc": MessageLookupByLibrary.simpleMessage(
             "本软件仅供学习交流、科研等非商业性质的用途，严禁将本软件用于商业目的。如有任何商业行为，均与本软件无关。"),

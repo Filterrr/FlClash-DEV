@@ -43,6 +43,7 @@ class CoreState with _$CoreState {
     required List<String> routeAddress,
     required bool ipv6,
     required bool onlyProxy,
+    @JsonKey(name: "disableIcmpForwarding") required bool disableIcmpForwarding,
   }) = _CoreState;
 
   factory CoreState.fromJson(Map<String, Object?> json) =>

@@ -107,6 +107,8 @@ _$TunImpl _$$TunImplFromJson(Map<String, dynamic> json) => _$TunImpl(
               ?.map((e) => e as String)
               .toList() ??
           const ["any:53", "tcp://any:53"],
+      disableIcmpForwarding:
+          json['disable-icmp-forwarding'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$$TunImplToJson(_$TunImpl instance) => <String, dynamic>{
@@ -114,6 +116,7 @@ Map<String, dynamic> _$$TunImplToJson(_$TunImpl instance) => <String, dynamic>{
       'device': instance.device,
       'stack': _$TunStackEnumMap[instance.stack]!,
       'dns-hijack': instance.dnsHijack,
+      'disable-icmp-forwarding': instance.disableIcmpForwarding,
     };
 
 const _$TunStackEnumMap = {

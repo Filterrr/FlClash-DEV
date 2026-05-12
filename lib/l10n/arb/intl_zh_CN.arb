@@ -332,5 +332,7 @@
   "routeAddress": "路由地址",
   "routeAddressDesc": "配置监听路由地址",
   "pleaseInputAdminPassword": "请输入管理员密码",
-  "copyEnvVar": "复制环境变量"
+  "copyEnvVar": "复制环境变量",
+  "disableIcmpForwarding": "禁用 ICMP 转发",
+  "disableIcmpForwardingDesc": "防止某些情况下的 ICMP 环回问题，ping 将不会显示真实的延迟"
 }

@@ -37,6 +37,7 @@ class _AndroidContainerState extends State<AndroidManager> {
         currentProfileName:
             config.currentProfile?.label ?? config.currentProfileId ?? "",
         routeAddress: clashConfig.routeAddress,
+        disableIcmpForwarding: clashConfig.tun.disableIcmpForwarding,
       ),
       builder: (__, state, child) {
         clashLib?.setState(state);
