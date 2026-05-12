@@ -1,7 +1,7 @@
-package com.follow.clash.plugins
+package com.follow.clashi.plugins
 
 import android.content.Context
-import com.follow.clash.GlobalState
+import com.follow.clashi.GlobalState
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
