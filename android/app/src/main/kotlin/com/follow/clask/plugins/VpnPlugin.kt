@@ -1,4 +1,4 @@
-package com.follow.clash.plugins
+package com.follow.clask.plugins
 
 import android.content.ComponentName
 import android.content.Context
@@ -11,15 +11,15 @@ import android.net.NetworkRequest
 import android.os.Build
 import android.os.IBinder
 import androidx.core.content.getSystemService
-import com.follow.clash.BaseServiceInterface
-import com.follow.clash.GlobalState
-import com.follow.clash.RunState
-import com.follow.clash.extensions.getProtocol
-import com.follow.clash.extensions.resolveDns
-import com.follow.clash.models.Process
-import com.follow.clash.models.VpnOptions
-import com.follow.clash.services.FlClashService
-import com.follow.clash.services.FlClashVpnService
+import com.follow.clask.BaseServiceInterface
+import com.follow.clask.GlobalState
+import com.follow.clask.RunState
+import com.follow.clask.extensions.getProtocol
+import com.follow.clask.extensions.resolveDns
+import com.follow.clask.models.Process
+import com.follow.clask.models.VpnOptions
+import com.follow.clask.services.FlClashService
+import com.follow.clask.services.FlClashVpnService
 import com.google.gson.Gson
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall

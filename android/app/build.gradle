@@ -32,7 +32,7 @@ def defKeyPassword = localProperties.getProperty('keyPassword')
 def isRelease = defStoreFile.exists() && defStorePassword != null && defKeyAlias != null && defKeyPassword != null
 
 android {
-    namespace "com.follow.clash"
+    namespace "com.follow.clask"
     compileSdkVersion 36
     ndkVersion "27.1.12297006"
 
@@ -61,7 +61,7 @@ android {
 
 
     defaultConfig {
-        applicationId "com.follow.clash"
+        applicationId "com.follow.clask"
         minSdkVersion 21
         targetSdkVersion 36
         versionCode flutterVersionCode.toInteger()

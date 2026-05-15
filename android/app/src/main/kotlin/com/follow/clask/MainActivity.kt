@@ -1,10 +1,10 @@
-package com.follow.clash
+package com.follow.clask
 
 
-import com.follow.clash.plugins.AppPlugin
-import com.follow.clash.plugins.ServicePlugin
-import com.follow.clash.plugins.TilePlugin
-import com.follow.clash.plugins.VpnPlugin
+import com.follow.clask.plugins.AppPlugin
+import com.follow.clask.plugins.ServicePlugin
+import com.follow.clask.plugins.TilePlugin
+import com.follow.clask.plugins.VpnPlugin
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 
