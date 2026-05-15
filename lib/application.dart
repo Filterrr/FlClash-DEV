@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:animations/animations.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:fl_clash/clash/clash.dart';
 import 'package:fl_clash/common/common.dart';
@@ -60,6 +61,7 @@ class Application extends StatefulWidget {
 class ApplicationState extends State<Application> {
   late SystemColorSchemes systemColorSchemes;
   Timer? timer;
+  StreamSubscription? connectivitySubscription;
 
   final _pageTransitionsTheme = const PageTransitionsTheme(
     builders: <TargetPlatform, PageTransitionsBuilder>{
@@ -99,6 +101,12 @@ class ApplicationState extends State<Application> {
     _initTimer();
     globalState.appController = AppController(context);
     globalState.measure = Measure.of(context);
+    connectivitySubscription = Connectivity().onConnectivityChanged.listen((_) {
+      final config = Provider.of<Config>(context, listen: false);
+      if (config.appSetting.closeConnections) {
+        clashCore.closeConnections();
+      }
+    });
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       final currentContext = globalState.navigatorKey.currentContext;
       if (currentContext != null) {
@@ -248,6 +256,7 @@ class ApplicationState extends State<Application> {
   Future<void> dispose() async {
     linkManager.destroy();
     _cancelTimer();
+    connectivitySubscription?.cancel();
     await clashService?.destroy();
     await globalState.appController.savePreferences();
     await globalState.appController.handleExit();
