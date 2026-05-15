@@ -292,11 +292,12 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
                     || it.requestedPermissions?.contains(Manifest.permission.INTERNET) == true
                     || it.packageName == "android"
 
-        }?.map {
+        }?.mapNotNull {
+            val appInfo = it.applicationInfo ?: return@mapNotNull null
             Package(
                 packageName = it.packageName,
-                label = it.applicationInfo.loadLabel(packageManager).toString(),
-                isSystem = (it.applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM) == 1,
+                label = appInfo.loadLabel(packageManager).toString(),
+                isSystem = (appInfo.flags and ApplicationInfo.FLAG_SYSTEM) == 1,
                 firstInstallTime = it.firstInstallTime
             )
         }?.let { packages.addAll(it) }
@@ -385,7 +386,8 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
             }.forEach {
                 if (it.name.matches(chinaAppRegex)) return true
             }
-            ZipFile(File(packageInfo.applicationInfo.publicSourceDir)).use {
+            val appInfo = packageInfo.applicationInfo ?: return false
+            ZipFile(File(appInfo.publicSourceDir)).use {
                 for (packageEntry in it.entries()) {
                     if (packageEntry.name.startsWith("firebase-")) return false
                 }
