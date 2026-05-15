@@ -1,4 +1,4 @@
-package com.follow.clash.models
+package com.follow.clask.models
 
 data class Process(
     val id: Int,

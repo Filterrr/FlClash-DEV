@@ -1,4 +1,4 @@
-package com.follow.clash.services
+package com.follow.clask.services
 
 import android.annotation.SuppressLint
 import android.app.Notification.FOREGROUND_SERVICE_IMMEDIATE
@@ -17,16 +17,16 @@ import android.os.Parcel
 import android.os.RemoteException
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import com.follow.clash.BaseServiceInterface
-import com.follow.clash.GlobalState
-import com.follow.clash.MainActivity
-import com.follow.clash.R
-import com.follow.clash.extensions.getActionPendingIntent
-import com.follow.clash.extensions.getIpv4RouteAddress
-import com.follow.clash.extensions.getIpv6RouteAddress
-import com.follow.clash.extensions.toCIDR
-import com.follow.clash.models.AccessControlMode
-import com.follow.clash.models.VpnOptions
+import com.follow.clask.BaseServiceInterface
+import com.follow.clask.GlobalState
+import com.follow.clask.MainActivity
+import com.follow.clask.R
+import com.follow.clask.extensions.getActionPendingIntent
+import com.follow.clask.extensions.getIpv4RouteAddress
+import com.follow.clask.extensions.getIpv6RouteAddress
+import com.follow.clask.extensions.toCIDR
+import com.follow.clask.models.AccessControlMode
+import com.follow.clask.models.VpnOptions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

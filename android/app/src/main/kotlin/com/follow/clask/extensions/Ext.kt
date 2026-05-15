@@ -1,4 +1,4 @@
-package com.follow.clash.extensions
+package com.follow.clask.extensions
 
 import android.app.PendingIntent
 import android.content.Context
@@ -12,10 +12,10 @@ import android.system.OsConstants.IPPROTO_TCP
 import android.system.OsConstants.IPPROTO_UDP
 import android.util.Base64
 import androidx.core.graphics.drawable.toBitmap
-import com.follow.clash.TempActivity
-import com.follow.clash.models.CIDR
-import com.follow.clash.models.Metadata
-import com.follow.clash.models.VpnOptions
+import com.follow.clask.TempActivity
+import com.follow.clask.models.CIDR
+import com.follow.clask.models.Metadata
+import com.follow.clask.models.VpnOptions
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

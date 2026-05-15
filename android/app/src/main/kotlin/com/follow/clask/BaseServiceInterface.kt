@@ -1,7 +1,7 @@
-package com.follow.clash
+package com.follow.clask
 
 
-import com.follow.clash.models.VpnOptions
+import com.follow.clask.models.VpnOptions
 
 interface BaseServiceInterface {
     fun start(options: VpnOptions): Int

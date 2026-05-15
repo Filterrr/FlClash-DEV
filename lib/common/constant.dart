@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 const appName = "FlClash";
 const appHelperService = "FlClashHelperService";
 const coreName = "clash.meta";
-const packageName = "com.follow.clash";
+const packageName = "com.follow.clask";
 final unixSocketPath = "/tmp/FlClashSocket_${Random().nextInt(10000)}.sock";
 const helperPort = 47890;
 const helperTag = "2024125";
