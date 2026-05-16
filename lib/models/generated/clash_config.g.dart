@@ -21,6 +21,7 @@ ClashConfig _$ClashConfigFromJson(Map<String, dynamic> json) => ClashConfig()
   ..geodataLoader = json['geodata-loader'] as String? ?? 'memconservative'
   ..unifiedDelay = json['unified-delay'] as bool? ?? false
   ..tcpConcurrent = json['tcp-concurrent'] as bool? ?? false
+  ..udp = json['udp'] as bool? ?? false
   ..tun = Tun.fromJson(json['tun'] as Map<String, dynamic>)
   ..dns = Dns.safeDnsFromJson(json['dns'] as Map<String, Object?>)
   ..rules = (json['rules'] as List<dynamic>).map((e) => e as String).toList()
@@ -62,6 +63,7 @@ Map<String, dynamic> _$ClashConfigToJson(ClashConfig instance) =>
       'geodata-loader': instance.geodataLoader,
       'unified-delay': instance.unifiedDelay,
       'tcp-concurrent': instance.tcpConcurrent,
+      'udp': instance.udp,
       'tun': instance.tun,
       'dns': instance.dns,
       'rules': instance.rules,

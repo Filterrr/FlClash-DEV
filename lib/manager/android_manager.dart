@@ -29,7 +29,7 @@ class _AndroidContainerState extends State<AndroidManager> {
       selector: (_, config, clashConfig) => CoreState(
         enable: config.vpnProps.enable,
         accessControl: config.isAccessControl ? config.accessControl : null,
-        ipv6: config.vpnProps.ipv6,
+        ipv6: clashConfig.ipv6,
         allowBypass: config.vpnProps.allowBypass,
         bypassDomain: config.networkProps.bypassDomain,
         systemProxy: config.vpnProps.systemProxy,

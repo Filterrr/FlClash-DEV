@@ -363,6 +363,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("开启后，主页选项卡将添加切换动画"),
         "tcpConcurrent": MessageLookupByLibrary.simpleMessage("TCP并发"),
         "tcpConcurrentDesc": MessageLookupByLibrary.simpleMessage("开启后允许TCP并发"),
+        "udp": MessageLookupByLibrary.simpleMessage("UDP"),
+        "udpDesc": MessageLookupByLibrary.simpleMessage("为所有代理组启用UDP"),
         "testUrl": MessageLookupByLibrary.simpleMessage("测速链接"),
         "theme": MessageLookupByLibrary.simpleMessage("主题"),
         "themeColor": MessageLookupByLibrary.simpleMessage("主题色彩"),

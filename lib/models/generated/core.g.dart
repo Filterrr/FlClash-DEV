@@ -86,6 +86,7 @@ _$ConfigExtendedParamsImpl _$$ConfigExtendedParamsImplFromJson(
       selectedMap: Map<String, String>.from(json['selected-map'] as Map),
       overrideDns: json['override-dns'] as bool,
       testUrl: json['test-url'] as String,
+      udp: json['udp'] as bool,
     );
 
 Map<String, dynamic> _$$ConfigExtendedParamsImplToJson(
@@ -96,6 +97,7 @@ Map<String, dynamic> _$$ConfigExtendedParamsImplToJson(
       'selected-map': instance.selectedMap,
       'override-dns': instance.overrideDns,
       'test-url': instance.testUrl,
+      'udp': instance.udp,
     };
 
 _$UpdateConfigParamsImpl _$$UpdateConfigParamsImplFromJson(

@@ -77,6 +77,7 @@ class ConfigExtendedParams with _$ConfigExtendedParams {
     @JsonKey(name: "selected-map") required SelectedMap selectedMap,
     @JsonKey(name: "override-dns") required bool overrideDns,
     @JsonKey(name: "test-url") required String testUrl,
+    @JsonKey(name: "udp") required bool udp,
   }) = _ConfigExtendedParams;
 
   factory ConfigExtendedParams.fromJson(Map<String, Object?> json) =>

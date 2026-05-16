@@ -250,6 +250,10 @@ class Ipv6Item extends StatelessWidget {
             onChanged: (bool value) async {
               final appController = globalState.appController;
               appController.clashConfig.ipv6 = value;
+              appController.config.vpnProps =
+                  appController.config.vpnProps.copyWith(
+                ipv6: value,
+              );
             },
           ),
         );
@@ -360,6 +364,31 @@ class TcpConcurrentItem extends StatelessWidget {
   }
 }
 
+class UdpItem extends StatelessWidget {
+  const UdpItem({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Selector<ClashConfig, bool>(
+      selector: (_, clashConfig) => clashConfig.udp,
+      builder: (_, udp, __) {
+        return ListItem.switchItem(
+          leading: const Icon(Icons.swap_vert_outlined),
+          title: Text(appLocalizations.udp),
+          subtitle: Text(appLocalizations.udpDesc),
+          delegate: SwitchDelegate(
+            value: udp,
+            onChanged: (bool value) async {
+              final appController = globalState.appController;
+              appController.clashConfig.udp = value;
+            },
+          ),
+        );
+      },
+    );
+  }
+}
+
 class GeodataLoaderItem extends StatelessWidget {
   const GeodataLoaderItem({super.key});
 
@@ -425,6 +454,7 @@ final generalItems = const [
   UnifiedDelayItem(),
   FindProcessItem(),
   TcpConcurrentItem(),
+  UdpItem(),
   GeodataLoaderItem(),
   ExternalControllerItem(),
 ]

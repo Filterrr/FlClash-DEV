@@ -108,6 +108,7 @@ class GlobalState {
           selectedMap: config.currentSelectedMap,
           overrideDns: config.overrideDns,
           testUrl: config.appSetting.testUrl,
+          udp: useClashConfig.udp,
         ),
       ),
     );
@@ -192,7 +193,7 @@ class GlobalState {
         CoreState(
           enable: config.vpnProps.enable,
           accessControl: config.isAccessControl ? config.accessControl : null,
-          ipv6: config.vpnProps.ipv6,
+          ipv6: clashConfig.ipv6,
           allowBypass: config.vpnProps.allowBypass,
           systemProxy: config.vpnProps.systemProxy,
           onlyProxy: config.appSetting.onlyProxy,
