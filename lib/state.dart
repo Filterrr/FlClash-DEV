@@ -108,6 +108,7 @@ class GlobalState {
           selectedMap: config.currentSelectedMap,
           overrideDns: config.overrideDns,
           testUrl: config.appSetting.testUrl,
+          udp: useClashConfig.udp,
         ),
       ),
     );

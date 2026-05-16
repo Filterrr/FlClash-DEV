@@ -224,6 +224,7 @@ class ClashConfig extends ChangeNotifier {
   int _keepAliveInterval;
   bool _unifiedDelay;
   bool _tcpConcurrent;
+  bool _udp;
   Tun _tun;
   Dns _dns;
   GeoXMap _geoXUrl;
@@ -240,6 +241,7 @@ class ClashConfig extends ChangeNotifier {
         _findProcessMode = FindProcessMode.off,
         _allowLan = false,
         _tcpConcurrent = false,
+        _udp = false,
         _logLevel = LogLevel.info,
         _tun = const Tun(),
         _unifiedDelay = false,
@@ -363,6 +365,16 @@ class ClashConfig extends ChangeNotifier {
     }
   }
 
+  @JsonKey(defaultValue: false)
+  bool get udp => _udp;
+
+  set udp(bool value) {
+    if (_udp != value) {
+      _udp = value;
+      notifyListeners();
+    }
+  }
+
   Tun get tun {
     return _tun;
   }
@@ -473,6 +485,7 @@ class ClashConfig extends ChangeNotifier {
       _unifiedDelay = clashConfig._unifiedDelay;
       _globalRealUa = clashConfig._globalRealUa;
       _tcpConcurrent = clashConfig._tcpConcurrent;
+      _udp = clashConfig._udp;
       _externalController = clashConfig._externalController;
       _geodataLoader = clashConfig._geodataLoader;
       _dns = clashConfig._dns;
@@ -491,6 +504,7 @@ class ClashConfig extends ChangeNotifier {
       ..findProcessMode = _findProcessMode
       ..allowLan = _allowLan
       ..tcpConcurrent = _tcpConcurrent
+      ..udp = _udp
       ..logLevel = _logLevel
       ..tun = tun
       ..unifiedDelay = _unifiedDelay

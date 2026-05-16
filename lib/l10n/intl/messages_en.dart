@@ -453,6 +453,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "tcpConcurrent": MessageLookupByLibrary.simpleMessage("TCP concurrent"),
         "tcpConcurrentDesc": MessageLookupByLibrary.simpleMessage(
             "Enabling it will allow TCP concurrency"),
+        "udp": MessageLookupByLibrary.simpleMessage("UDP"),
+        "udpDesc": MessageLookupByLibrary.simpleMessage(
+            "Enable UDP for all proxy groups"),
         "testUrl": MessageLookupByLibrary.simpleMessage("Test url"),
         "theme": MessageLookupByLibrary.simpleMessage("Theme"),
         "themeColor": MessageLookupByLibrary.simpleMessage("Theme color"),

@@ -13,6 +13,7 @@ type ConfigExtendedParams struct {
 	SelectedMap  map[string]string `json:"selected-map"`
 	TestURL      *string           `json:"test-url"`
 	OverrideDns  bool              `json:"override-dns"`
+	Udp          bool              `json:"udp"`
 }
 
 type GenerateConfigParams struct {

@@ -1800,6 +1800,26 @@ class AppLocalizations {
     );
   }
 
+  /// `UDP`
+  String get udp {
+    return Intl.message(
+      'UDP',
+      name: 'udp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enable UDP for all proxy groups`
+  String get udpDesc {
+    return Intl.message(
+      'Enable UDP for all proxy groups',
+      name: 'udpDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Geo Low Memory Mode`
   String get geodataLoader {
     return Intl.message(

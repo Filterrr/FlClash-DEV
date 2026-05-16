@@ -243,6 +243,11 @@ func overwriteConfig(targetConfig *config.RawConfig, patchConfig config.RawConfi
 	for idx := range targetConfig.ProxyGroup {
 		targetConfig.ProxyGroup[idx]["url"] = ""
 	}
+	if configParams.Udp {
+		for idx := range targetConfig.ProxyGroup {
+			targetConfig.ProxyGroup[idx]["udp"] = true
+		}
+	}
 	genHosts(targetConfig.Hosts, patchConfig.Hosts)
 	if configParams.OverrideDns {
 		targetConfig.DNS = patchConfig.DNS

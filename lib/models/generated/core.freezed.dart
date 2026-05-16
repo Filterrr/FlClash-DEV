@@ -805,6 +805,8 @@ mixin _$ConfigExtendedParams {
   bool get overrideDns => throw _privateConstructorUsedError;
   @JsonKey(name: "test-url")
   String get testUrl => throw _privateConstructorUsedError;
+  @JsonKey(name: "udp")
+  bool get udp => throw _privateConstructorUsedError;
 
   /// Serializes this ConfigExtendedParams to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -827,7 +829,8 @@ abstract class $ConfigExtendedParamsCopyWith<$Res> {
       @JsonKey(name: "is-compatible") bool isCompatible,
       @JsonKey(name: "selected-map") Map<String, String> selectedMap,
       @JsonKey(name: "override-dns") bool overrideDns,
-      @JsonKey(name: "test-url") String testUrl});
+      @JsonKey(name: "test-url") String testUrl,
+      @JsonKey(name: "udp") bool udp});
 }
 
 /// @nodoc
@@ -851,6 +854,7 @@ class _$ConfigExtendedParamsCopyWithImpl<$Res,
     Object? selectedMap = null,
     Object? overrideDns = null,
     Object? testUrl = null,
+    Object? udp = null,
   }) {
     return _then(_value.copyWith(
       isPatch: null == isPatch
@@ -873,6 +877,10 @@ class _$ConfigExtendedParamsCopyWithImpl<$Res,
           ? _value.testUrl
           : testUrl // ignore: cast_nullable_to_non_nullable
               as String,
+      udp: null == udp
+          ? _value.udp
+          : udp // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 }
@@ -890,7 +898,8 @@ abstract class _$$ConfigExtendedParamsImplCopyWith<$Res>
       @JsonKey(name: "is-compatible") bool isCompatible,
       @JsonKey(name: "selected-map") Map<String, String> selectedMap,
       @JsonKey(name: "override-dns") bool overrideDns,
-      @JsonKey(name: "test-url") String testUrl});
+      @JsonKey(name: "test-url") String testUrl,
+      @JsonKey(name: "udp") bool udp});
 }
 
 /// @nodoc
@@ -911,6 +920,7 @@ class __$$ConfigExtendedParamsImplCopyWithImpl<$Res>
     Object? selectedMap = null,
     Object? overrideDns = null,
     Object? testUrl = null,
+    Object? udp = null,
   }) {
     return _then(_$ConfigExtendedParamsImpl(
       isPatch: null == isPatch
@@ -933,6 +943,10 @@ class __$$ConfigExtendedParamsImplCopyWithImpl<$Res>
           ? _value.testUrl
           : testUrl // ignore: cast_nullable_to_non_nullable
               as String,
+      udp: null == udp
+          ? _value.udp
+          : udp // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -946,7 +960,8 @@ class _$ConfigExtendedParamsImpl implements _ConfigExtendedParams {
       @JsonKey(name: "selected-map")
       required final Map<String, String> selectedMap,
       @JsonKey(name: "override-dns") required this.overrideDns,
-      @JsonKey(name: "test-url") required this.testUrl})
+      @JsonKey(name: "test-url") required this.testUrl,
+      @JsonKey(name: "udp") required this.udp})
       : _selectedMap = selectedMap;
 
   factory _$ConfigExtendedParamsImpl.fromJson(Map<String, dynamic> json) =>
@@ -973,10 +988,13 @@ class _$ConfigExtendedParamsImpl implements _ConfigExtendedParams {
   @override
   @JsonKey(name: "test-url")
   final String testUrl;
+  @override
+  @JsonKey(name: "udp")
+  final bool udp;
 
   @override
   String toString() {
-    return 'ConfigExtendedParams(isPatch: $isPatch, isCompatible: $isCompatible, selectedMap: $selectedMap, overrideDns: $overrideDns, testUrl: $testUrl)';
+    return 'ConfigExtendedParams(isPatch: $isPatch, isCompatible: $isCompatible, selectedMap: $selectedMap, overrideDns: $overrideDns, testUrl: $testUrl, udp: $udp)';
   }
 
   @override
@@ -991,13 +1009,14 @@ class _$ConfigExtendedParamsImpl implements _ConfigExtendedParams {
                 .equals(other._selectedMap, _selectedMap) &&
             (identical(other.overrideDns, overrideDns) ||
                 other.overrideDns == overrideDns) &&
-            (identical(other.testUrl, testUrl) || other.testUrl == testUrl));
+            (identical(other.testUrl, testUrl) || other.testUrl == testUrl) &&
+            (identical(other.udp, udp) || other.udp == udp));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, isPatch, isCompatible,
-      const DeepCollectionEquality().hash(_selectedMap), overrideDns, testUrl);
+      const DeepCollectionEquality().hash(_selectedMap), overrideDns, testUrl, udp);
 
   /// Create a copy of ConfigExtendedParams
   /// with the given fields replaced by the non-null parameter values.
@@ -1024,7 +1043,8 @@ abstract class _ConfigExtendedParams implements ConfigExtendedParams {
           @JsonKey(name: "selected-map")
           required final Map<String, String> selectedMap,
           @JsonKey(name: "override-dns") required final bool overrideDns,
-          @JsonKey(name: "test-url") required final String testUrl}) =
+          @JsonKey(name: "test-url") required final String testUrl,
+          @JsonKey(name: "udp") required final bool udp}) =
       _$ConfigExtendedParamsImpl;
 
   factory _ConfigExtendedParams.fromJson(Map<String, dynamic> json) =
@@ -1045,6 +1065,9 @@ abstract class _ConfigExtendedParams implements ConfigExtendedParams {
   @override
   @JsonKey(name: "test-url")
   String get testUrl;
+  @override
+  @JsonKey(name: "udp")
+  bool get udp;
 
   /// Create a copy of ConfigExtendedParams
   /// with the given fields replaced by the non-null parameter values.
