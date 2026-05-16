@@ -235,7 +235,6 @@ class ClashConfigState with _$ClashConfigState {
     required int keepAliveInterval,
     required bool unifiedDelay,
     required bool tcpConcurrent,
-    required bool udp,
     required HostsMap hosts,
     required Tun tun,
     required Dns dns,
