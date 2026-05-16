@@ -244,8 +244,20 @@ func overwriteConfig(targetConfig *config.RawConfig, patchConfig config.RawConfi
 		targetConfig.ProxyGroup[idx]["url"] = ""
 	}
 	if configParams.Udp {
+		for idx := range targetConfig.Proxy {
+			targetConfig.Proxy[idx]["udp"] = true
+		}
 		for idx := range targetConfig.ProxyGroup {
 			targetConfig.ProxyGroup[idx]["udp"] = true
+		}
+		for _, mapping := range targetConfig.ProxyProvider {
+			if mapping["override"] == nil {
+				mapping["override"] = map[string]any{}
+			}
+			override, ok := mapping["override"].(map[string]any)
+			if ok {
+				override["udp"] = true
+			}
 		}
 	}
 	genHosts(targetConfig.Hosts, patchConfig.Hosts)
