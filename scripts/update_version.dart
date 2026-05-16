@@ -9,7 +9,7 @@ void main() async {
 
   final content = await pubspecFile.readAsString();
   final now = DateTime.now();
-  final dateStr = '${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}';
+  final dateStr = '${now.year}.${now.month.toString().padLeft(2, '0')}.${now.day.toString().padLeft(2, '0')}';
 
   final versionPattern = RegExp(r"version:\s*[\d.+]+");
   final match = versionPattern.firstMatch(content);
