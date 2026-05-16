@@ -142,33 +142,6 @@ class SystemProxyItem extends StatelessWidget {
   }
 }
 
-class Ipv6Item extends StatelessWidget {
-  const Ipv6Item({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Selector<Config, bool>(
-      selector: (_, config) => config.vpnProps.ipv6,
-      builder: (_, ipv6, __) {
-        return ListItem.switchItem(
-          title: const Text("IPv6"),
-          subtitle: Text(appLocalizations.ipv6InboundDesc),
-          delegate: SwitchDelegate(
-            value: ipv6,
-            onChanged: (bool value) async {
-              final config = globalState.appController.config;
-              final vpnProps = config.vpnProps;
-              config.vpnProps = vpnProps.copyWith(
-                ipv6: value,
-              );
-            },
-          ),
-        );
-      },
-    );
-  }
-}
-
 class TunStackItem extends StatelessWidget {
   const TunStackItem({super.key});
 
@@ -377,7 +350,6 @@ final networkItems = [
       items: [
         const SystemProxyItem(),
         const AllowBypassItem(),
-        const Ipv6Item(),
       ],
     ),
   if (system.isDesktop)

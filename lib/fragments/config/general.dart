@@ -250,6 +250,10 @@ class Ipv6Item extends StatelessWidget {
             onChanged: (bool value) async {
               final appController = globalState.appController;
               appController.clashConfig.ipv6 = value;
+              appController.config.vpnProps =
+                  appController.config.vpnProps.copyWith(
+                ipv6: value,
+              );
             },
           ),
         );
