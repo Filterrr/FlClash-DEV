@@ -3697,6 +3697,7 @@ mixin _$ClashConfigState {
   int get keepAliveInterval => throw _privateConstructorUsedError;
   bool get unifiedDelay => throw _privateConstructorUsedError;
   bool get tcpConcurrent => throw _privateConstructorUsedError;
+  bool get udp => throw _privateConstructorUsedError;
   Map<String, String> get hosts => throw _privateConstructorUsedError;
   Tun get tun => throw _privateConstructorUsedError;
   Dns get dns => throw _privateConstructorUsedError;
@@ -3730,6 +3731,7 @@ abstract class $ClashConfigStateCopyWith<$Res> {
       int keepAliveInterval,
       bool unifiedDelay,
       bool tcpConcurrent,
+      bool udp,
       Map<String, String> hosts,
       Tun tun,
       Dns dns,
@@ -3768,6 +3770,7 @@ class _$ClashConfigStateCopyWithImpl<$Res, $Val extends ClashConfigState>
     Object? keepAliveInterval = null,
     Object? unifiedDelay = null,
     Object? tcpConcurrent = null,
+    Object? udp = null,
     Object? hosts = null,
     Object? tun = null,
     Object? dns = null,
@@ -3823,6 +3826,10 @@ class _$ClashConfigStateCopyWithImpl<$Res, $Val extends ClashConfigState>
       tcpConcurrent: null == tcpConcurrent
           ? _value.tcpConcurrent
           : tcpConcurrent // ignore: cast_nullable_to_non_nullable
+              as bool,
+      udp: null == udp
+          ? _value.udp
+          : udp // ignore: cast_nullable_to_non_nullable
               as bool,
       hosts: null == hosts
           ? _value.hosts
@@ -3893,6 +3900,7 @@ abstract class _$$ClashConfigStateImplCopyWith<$Res>
       int keepAliveInterval,
       bool unifiedDelay,
       bool tcpConcurrent,
+      bool udp,
       Map<String, String> hosts,
       Tun tun,
       Dns dns,
@@ -3931,6 +3939,7 @@ class __$$ClashConfigStateImplCopyWithImpl<$Res>
     Object? keepAliveInterval = null,
     Object? unifiedDelay = null,
     Object? tcpConcurrent = null,
+    Object? udp = null,
     Object? hosts = null,
     Object? tun = null,
     Object? dns = null,
@@ -3987,6 +3996,10 @@ class __$$ClashConfigStateImplCopyWithImpl<$Res>
           ? _value.tcpConcurrent
           : tcpConcurrent // ignore: cast_nullable_to_non_nullable
               as bool,
+      udp: null == udp
+          ? _value.udp
+          : udp // ignore: cast_nullable_to_non_nullable
+              as bool,
       hosts: null == hosts
           ? _value._hosts
           : hosts // ignore: cast_nullable_to_non_nullable
@@ -4031,6 +4044,7 @@ class _$ClashConfigStateImpl implements _ClashConfigState {
       required this.keepAliveInterval,
       required this.unifiedDelay,
       required this.tcpConcurrent,
+      required this.udp,
       required final Map<String, String> hosts,
       required this.tun,
       required this.dns,
@@ -4065,6 +4079,8 @@ class _$ClashConfigStateImpl implements _ClashConfigState {
   final bool unifiedDelay;
   @override
   final bool tcpConcurrent;
+  @override
+  final bool udp;
   final Map<String, String> _hosts;
   @override
   Map<String, String> get hosts {
@@ -4098,7 +4114,7 @@ class _$ClashConfigStateImpl implements _ClashConfigState {
 
   @override
   String toString() {
-    return 'ClashConfigState(mixedPort: $mixedPort, allowLan: $allowLan, ipv6: $ipv6, overrideDns: $overrideDns, geodataLoader: $geodataLoader, logLevel: $logLevel, externalController: $externalController, mode: $mode, findProcessMode: $findProcessMode, keepAliveInterval: $keepAliveInterval, unifiedDelay: $unifiedDelay, tcpConcurrent: $tcpConcurrent, hosts: $hosts, tun: $tun, dns: $dns, geoXUrl: $geoXUrl, rules: $rules, globalRealUa: $globalRealUa)';
+    return 'ClashConfigState(mixedPort: $mixedPort, allowLan: $allowLan, ipv6: $ipv6, overrideDns: $overrideDns, geodataLoader: $geodataLoader, logLevel: $logLevel, externalController: $externalController, mode: $mode, findProcessMode: $findProcessMode, keepAliveInterval: $keepAliveInterval, unifiedDelay: $unifiedDelay, tcpConcurrent: $tcpConcurrent, udp: $udp, hosts: $hosts, tun: $tun, dns: $dns, geoXUrl: $geoXUrl, rules: $rules, globalRealUa: $globalRealUa)';
   }
 
   @override
@@ -4128,6 +4144,7 @@ class _$ClashConfigStateImpl implements _ClashConfigState {
                 other.unifiedDelay == unifiedDelay) &&
             (identical(other.tcpConcurrent, tcpConcurrent) ||
                 other.tcpConcurrent == tcpConcurrent) &&
+            (identical(other.udp, udp) || other.udp == udp) &&
             const DeepCollectionEquality().equals(other._hosts, _hosts) &&
             (identical(other.tun, tun) || other.tun == tun) &&
             (identical(other.dns, dns) || other.dns == dns) &&
@@ -4152,6 +4169,7 @@ class _$ClashConfigStateImpl implements _ClashConfigState {
       keepAliveInterval,
       unifiedDelay,
       tcpConcurrent,
+      udp,
       const DeepCollectionEquality().hash(_hosts),
       tun,
       dns,
@@ -4183,6 +4201,7 @@ abstract class _ClashConfigState implements ClashConfigState {
       required final int keepAliveInterval,
       required final bool unifiedDelay,
       required final bool tcpConcurrent,
+      required final bool udp,
       required final Map<String, String> hosts,
       required final Tun tun,
       required final Dns dns,
@@ -4214,6 +4233,8 @@ abstract class _ClashConfigState implements ClashConfigState {
   bool get unifiedDelay;
   @override
   bool get tcpConcurrent;
+  @override
+  bool get udp;
   @override
   Map<String, String> get hosts;
   @override

@@ -37,6 +37,7 @@ class _ClashContainerState extends State<ClashManager> with AppMessageListener {
         keepAliveInterval: clashConfig.keepAliveInterval,
         unifiedDelay: clashConfig.unifiedDelay,
         tcpConcurrent: clashConfig.tcpConcurrent,
+        udp: clashConfig.udp,
         tun: clashConfig.tun,
         dns: clashConfig.dns,
         hosts: clashConfig.hosts,
