@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
+import 'package:fl_clash/fragments/config/runtime_config.dart';
 import 'package:fl_clash/fragments/profiles/edit_profile.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/state.dart';
@@ -246,6 +247,16 @@ class ProfileItem extends StatelessWidget {
     );
   }
 
+  _handleShowRuntimeConfig(BuildContext context) {
+    showExtendPage(
+      context,
+      body: RuntimeConfigFragment(profile: profile),
+      title: appLocalizations.runtimeConfig,
+      isScaffold: true,
+      isBlur: false,
+    );
+  }
+
   List<Widget> _buildUrlProfileInfo(BuildContext context) {
     final subscriptionInfo = profile.subscriptionInfo;
     return [
@@ -277,12 +288,14 @@ class ProfileItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CommonCard(
-      isSelected: profile.id == groupValue,
-      onPressed: () {
-        onChanged(profile.id);
-      },
-      child: ListItem(
+    return LongPressDetector(
+      onLongPress: () => _handleShowRuntimeConfig(context),
+      child: CommonCard(
+        isSelected: profile.id == groupValue,
+        onPressed: () {
+          onChanged(profile.id);
+        },
+        child: ListItem(
         key: Key(profile.id),
         horizontalTitleGap: 16,
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -359,6 +372,7 @@ class ProfileItem extends StatelessWidget {
           ),
         ),
         tileTitleAlignment: ListTileTitleAlignment.titleHeight,
+      ),
       ),
     );
   }

@@ -2,7 +2,6 @@ import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/fragments/config/dns.dart';
 import 'package:fl_clash/fragments/config/general.dart';
 import 'package:fl_clash/fragments/config/network.dart';
-import 'package:fl_clash/fragments/config/runtime_config.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
@@ -54,17 +53,6 @@ class _ConfigFragmentState extends State<ConfigFragment> {
           extendPageWidth: 360,
         ),
       ),
-      ListItem.open(
-        title: Text(appLocalizations.runtimeConfig),
-        subtitle: Text(appLocalizations.runtimeConfigDesc),
-        leading: const Icon(Icons.code),
-        delegate: OpenDelegate(
-          title: appLocalizations.runtimeConfig,
-          isScaffold: true,
-          isBlur: false,
-          widget: const RuntimeConfigFragment(),
-        ),
-      )
     ];
     return generateListView(
       items
