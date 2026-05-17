@@ -115,32 +115,6 @@ class VpnSystemProxyItem extends StatelessWidget {
   }
 }
 
-class DeepSleepItem extends StatelessWidget {
-  const DeepSleepItem({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Selector<Config, bool>(
-      selector: (_, config) => config.vpnProps.deepSleep,
-      builder: (_, deepSleep, __) {
-        return ListItem.switchItem(
-          title: Text(appLocalizations.deepSleep),
-          subtitle: Text(appLocalizations.deepSleepDesc),
-          delegate: SwitchDelegate(
-            value: deepSleep,
-            onChanged: (bool value) async {
-              final config = globalState.appController.config;
-              config.vpnProps = config.vpnProps.copyWith(
-                deepSleep: value,
-              );
-            },
-          ),
-        );
-      },
-    );
-  }
-}
-
 class SystemProxyItem extends StatelessWidget {
   const SystemProxyItem({super.key});
 
@@ -196,40 +170,6 @@ class TunStackItem extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-}
-
-class DnsHijackItem extends StatelessWidget {
-  const DnsHijackItem({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return ListItem.open(
-      title: Text(appLocalizations.dnsHijack),
-      subtitle: Text(appLocalizations.dnsHijackDesc),
-      delegate: OpenDelegate(
-        isBlur: false,
-        title: appLocalizations.dnsHijack,
-        widget: Selector<ClashConfig, List<String>>(
-          selector: (_, clashConfig) => clashConfig.tun.dnsHijack,
-          shouldRebuild: (prev, next) => !stringListEquality.equals(prev, next),
-          builder: (_, dnsHijack, __) {
-            return ListPage(
-              title: appLocalizations.dnsHijack,
-              items: dnsHijack,
-              titleBuilder: (item) => Text(item),
-              onChange: (items) {
-                final clashConfig = globalState.appController.clashConfig;
-                clashConfig.tun = clashConfig.tun.copyWith(
-                  dnsHijack: List.from(items),
-                );
-              },
-            );
-          },
-        ),
-        extendPageWidth: 360,
-      ),
     );
   }
 }
@@ -410,7 +350,6 @@ final networkItems = [
       items: [
         const SystemProxyItem(),
         const AllowBypassItem(),
-        const DeepSleepItem(),
       ],
     ),
   if (system.isDesktop)
@@ -426,7 +365,6 @@ final networkItems = [
     items: [
       if (system.isDesktop) const TUNItem(),
       const TunStackItem(),
-      const DnsHijackItem(),
       const DisableICMPForwardingItem(),
       const RouteModeItem(),
       const RouteAddressItem(),
