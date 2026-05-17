@@ -46,21 +46,24 @@ class _RuntimeConfigFragmentState extends State<RuntimeConfigFragment> {
         return;
       }
       final dio = Dio();
-      final response = await dio.get(
-        'http://$controller/configs',
-        options: Options(
-          responseType: ResponseType.json,
-        ),
-      );
-      if (response.statusCode != HttpStatus.ok || response.data == null) {
-        setState(() {
-          _content = null;
-          _isLoading = false;
-          _error = 'Failed to fetch runtime config: ${response.statusCode}';
-        });
-        return;
-      }
-      final prettyJson = const JsonEncoder.withIndent('  ').convert(response.data);
+      final baseUrl = 'http://$controller';
+      final results = await Future.wait([
+        _safeGet(dio, '$baseUrl/configs'),
+        _safeGet(dio, '$baseUrl/proxies'),
+        _safeGet(dio, '$baseUrl/rules'),
+        _safeGet(dio, '$baseUrl/providers/proxies'),
+        _safeGet(dio, '$baseUrl/providers/rules'),
+        _safeGet(dio, '$baseUrl/group'),
+      ]);
+      final merged = <String, dynamic>{};
+      merged['configs'] = results[0];
+      merged['proxies'] = results[1];
+      merged['rules'] = results[2];
+      merged['proxy-providers'] = results[3];
+      merged['rule-providers'] = results[4];
+      merged['proxy-groups'] = results[5];
+      final prettyJson =
+          const JsonEncoder.withIndent('  ').convert(merged);
       if (!mounted) return;
       setState(() {
         _content = prettyJson;
@@ -74,6 +77,21 @@ class _RuntimeConfigFragmentState extends State<RuntimeConfigFragment> {
         _isLoading = false;
         _error = e.toString();
       });
+    }
+  }
+
+  Future<dynamic> _safeGet(Dio dio, String url) async {
+    try {
+      final response = await dio.get(
+        url,
+        options: Options(responseType: ResponseType.json),
+      );
+      if (response.statusCode == HttpStatus.ok) {
+        return response.data;
+      }
+      return null;
+    } catch (_) {
+      return null;
     }
   }
 
