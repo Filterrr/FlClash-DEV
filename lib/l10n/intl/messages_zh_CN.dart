@@ -129,6 +129,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "discoverNewVersion": MessageLookupByLibrary.simpleMessage("发现新版本"),
         "discovery": MessageLookupByLibrary.simpleMessage("发现新版本"),
         "dnsDesc": MessageLookupByLibrary.simpleMessage("更新DNS相关设置"),
+        "dnsHijack": MessageLookupByLibrary.simpleMessage("DNS劫持"),
+        "dnsHijackDesc": MessageLookupByLibrary.simpleMessage(
+            "将DNS解析导入内部DNS模块"),
         "dnsMode": MessageLookupByLibrary.simpleMessage("DNS模式"),
         "doYouWantToPass": MessageLookupByLibrary.simpleMessage("是否要通过"),
         "domain": MessageLookupByLibrary.simpleMessage("域名"),

@@ -174,6 +174,40 @@ class TunStackItem extends StatelessWidget {
   }
 }
 
+class DnsHijackItem extends StatelessWidget {
+  const DnsHijackItem({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListItem.open(
+      title: Text(appLocalizations.dnsHijack),
+      subtitle: Text(appLocalizations.dnsHijackDesc),
+      delegate: OpenDelegate(
+        isBlur: false,
+        title: appLocalizations.dnsHijack,
+        widget: Selector<ClashConfig, List<String>>(
+          selector: (_, clashConfig) => clashConfig.tun.dnsHijack,
+          shouldRebuild: (prev, next) => !stringListEquality.equals(prev, next),
+          builder: (_, dnsHijack, __) {
+            return ListPage(
+              title: appLocalizations.dnsHijack,
+              items: dnsHijack,
+              titleBuilder: (item) => Text(item),
+              onChange: (items) {
+                final clashConfig = globalState.appController.clashConfig;
+                clashConfig.tun = clashConfig.tun.copyWith(
+                  dnsHijack: List.from(items),
+                );
+              },
+            );
+          },
+        ),
+        extendPageWidth: 360,
+      ),
+    );
+  }
+}
+
 class DisableICMPForwardingItem extends StatelessWidget {
   const DisableICMPForwardingItem({super.key});
 
@@ -365,6 +399,7 @@ final networkItems = [
     items: [
       if (system.isDesktop) const TUNItem(),
       const TunStackItem(),
+      const DnsHijackItem(),
       const DisableICMPForwardingItem(),
       const RouteModeItem(),
       const RouteAddressItem(),

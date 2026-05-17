@@ -158,6 +158,9 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Discovery a new version"),
         "dnsDesc":
             MessageLookupByLibrary.simpleMessage("Update DNS related settings"),
+        "dnsHijack": MessageLookupByLibrary.simpleMessage("DNS hijack"),
+        "dnsHijackDesc": MessageLookupByLibrary.simpleMessage(
+            "Redirect DNS resolution to the internal DNS module"),
         "dnsMode": MessageLookupByLibrary.simpleMessage("DNS mode"),
         "doYouWantToPass":
             MessageLookupByLibrary.simpleMessage("Do you want to pass"),

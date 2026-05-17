@@ -3429,6 +3429,26 @@ class AppLocalizations {
       args: [],
     );
   }
+
+  /// `DNS hijack`
+  String get dnsHijack {
+    return Intl.message(
+      'DNS hijack',
+      name: 'dnsHijack',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Redirect DNS resolution to the internal DNS module`
+  String get dnsHijackDesc {
+    return Intl.message(
+      'Redirect DNS resolution to the internal DNS module',
+      name: 'dnsHijackDesc',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {
