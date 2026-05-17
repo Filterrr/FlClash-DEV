@@ -336,5 +336,9 @@
   "pleaseInputAdminPassword": "请输入管理员密码",
   "copyEnvVar": "复制环境变量",
   "disableIcmpForwarding": "禁用 ICMP 转发",
-  "disableIcmpForwardingDesc": "防止某些情况下的 ICMP 环回问题，ping 将不会显示真实的延迟"
+  "disableIcmpForwardingDesc": "防止某些情况下的 ICMP 环回问题，ping 将不会显示真实的延迟",
+  "dnsHijack": "DNS劫持",
+  "dnsHijackDesc": "将DNS解析导入内部DNS模块",
+  "deepSleep": "深度休眠",
+  "deepSleepDesc": "开启后同步系统Doze休眠模式以节省电量，休眠期间VPN可能中断"
 }

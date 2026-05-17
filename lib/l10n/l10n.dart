@@ -3429,6 +3429,46 @@ class AppLocalizations {
       args: [],
     );
   }
+
+  /// `DNS hijack`
+  String get dnsHijack {
+    return Intl.message(
+      'DNS hijack',
+      name: 'dnsHijack',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Redirect DNS resolution to the internal DNS module`
+  String get dnsHijackDesc {
+    return Intl.message(
+      'Redirect DNS resolution to the internal DNS module',
+      name: 'dnsHijackDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Deep sleep`
+  String get deepSleep {
+    return Intl.message(
+      'Deep sleep',
+      name: 'deepSleep',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `When enabled, sync with system Doze mode to save battery, VPN may be interrupted during sleep`
+  String get deepSleepDesc {
+    return Intl.message(
+      'When enabled, sync with system Doze mode to save battery, VPN may be interrupted during sleep',
+      name: 'deepSleepDesc',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {
