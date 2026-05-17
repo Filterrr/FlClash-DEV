@@ -123,6 +123,10 @@ class MessageLookup extends MessageLookupByLibrary {
             "禁用 ICMP 转发"),
         "disableIcmpForwardingDesc": MessageLookupByLibrary.simpleMessage(
             "防止某些情况下的 ICMP 环回问题，ping 将不会显示真实的延迟"),
+        "runtimeConfig": MessageLookupByLibrary.simpleMessage(
+            "运行时配置"),
+        "runtimeConfigDesc": MessageLookupByLibrary.simpleMessage(
+            "以 Clash Meta 配置文件格式查看当前运行时配置"),
         "disclaimer": MessageLookupByLibrary.simpleMessage("免责声明"),
         "disclaimerDesc": MessageLookupByLibrary.simpleMessage(
             "本软件仅供学习交流、科研等非商业性质的用途，严禁将本软件用于商业目的。如有任何商业行为，均与本软件无关。"),

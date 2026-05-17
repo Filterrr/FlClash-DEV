@@ -336,5 +336,7 @@
   "pleaseInputAdminPassword": "请输入管理员密码",
   "copyEnvVar": "复制环境变量",
   "disableIcmpForwarding": "禁用 ICMP 转发",
-  "disableIcmpForwardingDesc": "防止某些情况下的 ICMP 环回问题，ping 将不会显示真实的延迟"
+  "disableIcmpForwardingDesc": "防止某些情况下的 ICMP 环回问题，ping 将不会显示真实的延迟",
+  "runtimeConfig": "运行时配置",
+  "runtimeConfigDesc": "以 Clash Meta 配置文件格式查看当前运行时配置"
 }

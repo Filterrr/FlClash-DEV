@@ -3429,6 +3429,24 @@ class AppLocalizations {
       args: [],
     );
   }
+
+  String get runtimeConfig {
+    return Intl.message(
+      'Runtime Config',
+      name: 'runtimeConfig',
+      desc: '',
+      args: [],
+    );
+  }
+
+  String get runtimeConfigDesc {
+    return Intl.message(
+      'View the current running configuration in Clash Meta format',
+      name: 'runtimeConfigDesc',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {

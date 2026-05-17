@@ -52,7 +52,7 @@ class _ConfigFragmentState extends State<ConfigFragment> {
           isBlur: false,
           extendPageWidth: 360,
         ),
-      )
+      ),
     ];
     return generateListView(
       items
