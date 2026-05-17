@@ -1,0 +1,358 @@
+name: Update Core and Build
+
+on:
+  schedule:
+    - cron: "0 6 */5 * *"
+  workflow_dispatch:
+    inputs:
+      commit:
+        description: 'Target commit hash to update (optional, takes priority over branch)'
+        required: false
+        default: ''
+      branch:
+        description: 'Target branch to update (default: Alpha, ignored if commit is provided)'
+        required: false
+        default: 'Alpha'
+  push:
+    tags:
+      - 'v*'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  SUBMODULE_PATH: core/Clash.Meta
+  DEFAULT_BRANCH: Alpha
+
+jobs:
+  check-update:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    outputs:
+      has_update: ${{ steps.check.outputs.has_update }}
+      new_commit: ${{ steps.check.outputs.new_commit }}
+      new_commit_short: ${{ steps.check.outputs.new_commit_short }}
+      old_commit: ${{ steps.check.outputs.old_commit }}
+      old_commit_short: ${{ steps.check.outputs.old_commit_short }}
+      branch_name: ${{ steps.check.outputs.branch_name }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+        with:
+          submodules: recursive
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check for Updates
+        id: check
+        run: |
+          cd ${{ env.SUBMODULE_PATH }}
+
+          OLD_COMMIT=$(git rev-parse HEAD)
+          OLD_COMMIT_SHORT=${OLD_COMMIT:0:7}
+          echo "old_commit=$OLD_COMMIT" >> $GITHUB_OUTPUT
+          echo "old_commit_short=$OLD_COMMIT_SHORT" >> $GITHUB_OUTPUT
+          echo "Current commit: $OLD_COMMIT_SHORT"
+
+          TARGET_COMMIT="${{ github.event.inputs.commit }}"
+          TARGET_BRANCH="${{ github.event.inputs.branch || env.DEFAULT_BRANCH }}"
+
+          if [ -n "$TARGET_COMMIT" ]; then
+            echo "Using provided commit hash: $TARGET_COMMIT"
+            git fetch origin
+            if git cat-file -e "$TARGET_COMMIT" 2>/dev/null; then
+              NEW_COMMIT=$(git rev-parse "$TARGET_COMMIT")
+            else
+              echo "Error: Commit $TARGET_COMMIT not found in submodule"
+              exit 1
+            fi
+          else
+            echo "Using branch: $TARGET_BRANCH"
+            git fetch origin
+            NEW_COMMIT=$(git rev-parse origin/$TARGET_BRANCH)
+          fi
+
+          NEW_COMMIT_SHORT=${NEW_COMMIT:0:7}
+          echo "new_commit=$NEW_COMMIT" >> $GITHUB_OUTPUT
+          echo "new_commit_short=$NEW_COMMIT_SHORT" >> $GITHUB_OUTPUT
+          echo "Target commit: $NEW_COMMIT_SHORT"
+
+          if [ "$OLD_COMMIT" != "$NEW_COMMIT" ]; then
+            echo "has_update=true" >> $GITHUB_OUTPUT
+            echo "Found new updates!"
+
+            BRANCH_NAME="update-core/$(date +%Y%m%d)-${NEW_COMMIT_SHORT}"
+            echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+          else
+            echo "has_update=false" >> $GITHUB_OUTPUT
+            echo "No updates found."
+          fi
+
+  update-and-test:
+    needs: check-update
+    if: needs.check-update.outputs.has_update == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Update Submodule
+        run: |
+          git submodule update --init ${{ env.SUBMODULE_PATH }}
+
+          cd ${{ env.SUBMODULE_PATH }}
+
+          git fetch origin
+
+          git checkout ${{ needs.check-update.outputs.new_commit }}
+
+          echo "Clash.Meta current commit: $(git rev-parse HEAD)"
+
+          echo "## Update Log" > /tmp/update_log.md
+          git log --oneline ${{ needs.check-update.outputs.old_commit }}..HEAD >> /tmp/update_log.md
+
+      - name: Setup Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: '1.25.x'
+          cache: false
+
+      - name: Update Go Dependencies
+        run: |
+          cd core
+          go mod tidy
+
+      - name: Download Go Dependencies
+        run: |
+          cd core
+          go mod download
+
+      - name: Debug Go Environment
+        run: |
+          cd core
+          echo "Go version: $(go version)"
+          echo "Go module cache: $(go env GOMODCACHE)"
+          echo "Clash.Meta commit: $(git -C Clash.Meta rev-parse HEAD)"
+          echo "Clash.Meta branch: $(git -C Clash.Meta branch -vv)"
+          echo "statistic/manager.go content:"
+          cat Clash.Meta/tunnel/statistic/manager.go | head -110 | tail -25
+          echo "---"
+          echo "go.mod replace directive:"
+          grep "replace" go.mod || true
+
+      - name: Test Build Core
+        run: |
+          cd core
+          go build -v ./...
+
+      - name: Commit and Push Changes
+        run: |
+          git add ${{ env.SUBMODULE_PATH }} core/go.mod core/go.sum
+          git commit -m 'chore: update Clash.Meta core to ${{ needs.check-update.outputs.new_commit_short }}' || echo "No changes to commit"
+          git push origin HEAD:${{ needs.check-update.outputs.branch_name }} --force
+
+      - name: Create Pull Request
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create \
+            --base main \
+            --head ${{ needs.check-update.outputs.branch_name }} \
+            --title 'chore: update Clash.Meta core to ${{ needs.check-update.outputs.new_commit_short }}' \
+            --body "## Core Update
+
+          This PR updates the Clash.Meta core submodule to the latest version.
+
+          ### Changes
+          - **Old Commit**: \`${{ needs.check-update.outputs.old_commit_short }}\` (${{ needs.check-update.outputs.old_commit }})
+          - **New Commit**: \`${{ needs.check-update.outputs.new_commit_short }}\` (${{ needs.check-update.outputs.new_commit }})
+
+          ### Update Log
+          \`\`\`
+          $(cat /tmp/update_log.md)
+          \`\`\`
+
+          ### Verification
+          - [x] Go modules updated (\`go mod tidy\`)
+          - [x] Core builds successfully
+
+          > Auto-generated by [Update Core Workflow](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})" \
+            || echo "PR already exists or failed to create"
+
+  build:
+    needs: [check-update, update-and-test]
+    if: >-
+      always() &&
+      ((github.event_name == 'push') ||
+       (github.event_name == 'workflow_dispatch' && needs.update-and-test.result == 'success'))
+    name: Build ${{ matrix.platform }}${{ matrix.arch && format('-{0}', matrix.arch) || '' }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: android
+            os: ubuntu-latest
+            arch: universal
+            is_android: true
+            go_version: '1.25.x'
+            flutter_channel: 'stable'
+
+          - platform: windows
+            os: windows-latest
+            arch: amd64
+            go_version: '1.25.x'
+            flutter_channel: 'stable'
+            flutter_version: '3.38.10'
+          - platform: windows
+            os: windows-latest
+            arch: arm64
+            go_version: '1.25.x'
+            flutter_channel: 'stable'
+            flutter_version: '3.38.10'
+
+          - platform: macos
+            os: macos-latest
+            arch: arm64
+            go_version: '1.25.x'
+            flutter_channel: 'stable'
+            flutter_version: '3.38.10'
+          - platform: macos
+            os: macos-latest
+            arch: amd64
+            go_version: '1.25.x'
+            flutter_channel: 'stable'
+            flutter_version: '3.38.10'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && needs.check-update.outputs.branch_name || github.ref }}
+          submodules: recursive
+          fetch-depth: 1
+
+      - name: Setup Java
+        if: matrix.is_android == true
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Setup NDK
+        if: matrix.is_android == true
+        uses: nttld/setup-ndk@v1
+        id: setup-ndk
+        with:
+          ndk-version: r26b
+          add-to-path: true
+          link-to-sdk: true
+
+      - name: Setup Rust
+        if: matrix.platform == 'windows'
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: 'x86_64-pc-windows-msvc'
+
+      - name: Setup Golang
+        uses: actions/setup-go@v6
+        with:
+          go-version: ${{ matrix.go_version }}
+          cache-dependency-path: core/go.sum
+
+      - name: Update Go Dependencies
+        run: |
+          cd core
+          go mod tidy
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: ${{ matrix.flutter_channel }}
+          cache: true
+          cache-key: flutter-${{ matrix.platform }}-${{ matrix.arch }}-${{ hashFiles('**/pubspec.lock') }}
+          flutter-version: '3.x'
+
+      - name: Prepare Dependencies
+        run: |
+          flutter pub get
+          dart run build_runner build -d || true
+
+      - name: Force 16K Google Dependencies (CameraX & ML Kit)
+        if: matrix.is_android == true
+        run: |
+          cat <<EOF >> android/build.gradle
+
+          allprojects {
+              configurations.all {
+                  resolutionStrategy {
+                      force 'androidx.camera:camera-core:1.4.0'
+                      force 'androidx.camera:camera-camera2:1.4.0'
+                      force 'androidx.camera:camera-lifecycle:1.4.0'
+                      force 'androidx.camera:camera-video:1.4.0'
+                      force 'androidx.camera:camera-view:1.4.0'
+                      force 'com.google.mlkit:barcode-scanning:17.3.0'
+                      force 'com.google.android.gms:play-services-mlkit-barcode-scanning:18.3.1'
+                  }
+              }
+          }
+          EOF
+
+      - name: Inject 16K Page Size for Go (Android)
+        if: matrix.is_android == true
+        run: echo "CGO_LDFLAGS=-Wl,-z,max-page-size=16384" >> $GITHUB_ENV
+
+      - name: Build Platform
+        run: dart setup.dart ${{ matrix.platform }} ${{ matrix.arch && format('--arch {0}', matrix.arch) || '' }}
+
+      - name: Sign Android APKs with Fixed Keystore
+        if: matrix.is_android == true
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE }}
+          KEYSTORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          echo "$KEYSTORE_BASE64" | base64 --decode > release.keystore
+          APKSIGNER=$(find $ANDROID_HOME/build-tools -name apksigner | grep -v "\.bat$" | sort -r | head -n 1)
+
+          for apk in ./dist/*.apk; do
+            if [ -f "$apk" ]; then
+              echo "Applying consistent signature to $apk"
+              $APKSIGNER sign --ks release.keystore \
+                --ks-pass env:KEYSTORE_PASSWORD \
+                --ks-key-alias "$KEY_ALIAS" \
+                --key-pass env:KEY_PASSWORD \
+                "$apk"
+            fi
+          done
+          rm release.keystore
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v6
+        with:
+          name: FlClash-${{ matrix.platform }}${{ matrix.arch && format('-{0}', matrix.arch) || '' }}
+          path: ./dist
+          overwrite: true
+
+  notify-no-update:
+    needs: check-update
+    if: needs.check-update.outputs.has_update == 'false'
+    runs-on: ubuntu-latest
+    steps:
+      - name: No Update Needed
+        run: |
+          echo "Clash.Meta core is already up to date."
+          echo "Current commit: ${{ needs.check-update.outputs.old_commit_short }} (${{ needs.check-update.outputs.old_commit }})"
