@@ -47,6 +47,7 @@ dependencies:
   lpinyin: ^2.0.3
   emoji_regex: ^0.0.5
   process_run: ^1.1.0
+  yaml: ^3.1.2
   cached_network_image: ^3.4.0
   hotkey_manager: ^0.2.3
   uni_platform: ^0.1.3

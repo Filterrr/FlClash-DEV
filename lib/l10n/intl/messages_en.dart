@@ -149,6 +149,10 @@ class MessageLookup extends MessageLookupByLibrary {
             "Disable ICMP forwarding"),
         "disableIcmpForwardingDesc": MessageLookupByLibrary.simpleMessage(
             "Prevent ICMP loopback issues, ping will not show real latency"),
+        "runtimeConfig": MessageLookupByLibrary.simpleMessage(
+            "Runtime Config"),
+        "runtimeConfigDesc": MessageLookupByLibrary.simpleMessage(
+            "View the current running configuration in Clash Meta format"),
         "disclaimer": MessageLookupByLibrary.simpleMessage("Disclaimer"),
         "disclaimerDesc": MessageLookupByLibrary.simpleMessage(
             "This software is only used for non-commercial purposes such as learning exchanges and scientific research. It is strictly prohibited to use this software for commercial purposes. Any commercial activity, if any, has nothing to do with this software."),
