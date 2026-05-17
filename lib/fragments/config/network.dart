@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
+import 'package:fl_clash/plugins/app.dart';
 import 'package:fl_clash/state.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -107,6 +108,35 @@ class VpnSystemProxyItem extends StatelessWidget {
               config.vpnProps = vpnProps.copyWith(
                 systemProxy: value,
               );
+            },
+          ),
+        );
+      },
+    );
+  }
+}
+
+class DeepSleepItem extends StatelessWidget {
+  const DeepSleepItem({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Selector<Config, bool>(
+      selector: (_, config) => config.vpnProps.deepSleep,
+      builder: (_, deepSleep, __) {
+        return ListItem.switchItem(
+          title: Text(appLocalizations.deepSleep),
+          subtitle: Text(appLocalizations.deepSleepDesc),
+          delegate: SwitchDelegate(
+            value: deepSleep,
+            onChanged: (bool value) async {
+              final config = globalState.appController.config;
+              config.vpnProps = config.vpnProps.copyWith(
+                deepSleep: value,
+              );
+              if (!value) {
+                app?.requestIgnoreBatteryOptimization();
+              }
             },
           ),
         );
@@ -384,6 +414,7 @@ final networkItems = [
       items: [
         const SystemProxyItem(),
         const AllowBypassItem(),
+        const DeepSleepItem(),
       ],
     ),
   if (system.isDesktop)

@@ -132,6 +132,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "dnsHijack": MessageLookupByLibrary.simpleMessage("DNS劫持"),
         "dnsHijackDesc": MessageLookupByLibrary.simpleMessage(
             "将DNS解析导入内部DNS模块"),
+        "deepSleep": MessageLookupByLibrary.simpleMessage("深度休眠"),
+        "deepSleepDesc": MessageLookupByLibrary.simpleMessage(
+            "开启后同步系统Doze休眠模式以节省电量，休眠期间VPN可能中断"),
         "dnsMode": MessageLookupByLibrary.simpleMessage("DNS模式"),
         "doYouWantToPass": MessageLookupByLibrary.simpleMessage("是否要通过"),
         "domain": MessageLookupByLibrary.simpleMessage("域名"),

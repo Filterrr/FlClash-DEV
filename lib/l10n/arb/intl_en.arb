@@ -338,5 +338,7 @@
   "disableIcmpForwarding": "Disable ICMP forwarding",
   "disableIcmpForwardingDesc": "Prevent ICMP loopback issues, ping will not show real latency",
   "dnsHijack": "DNS hijack",
-  "dnsHijackDesc": "Redirect DNS resolution to the internal DNS module"
+  "dnsHijackDesc": "Redirect DNS resolution to the internal DNS module",
+  "deepSleep": "Deep sleep",
+  "deepSleepDesc": "When enabled, sync with system Doze mode to save battery, VPN may be interrupted during sleep"
 }
