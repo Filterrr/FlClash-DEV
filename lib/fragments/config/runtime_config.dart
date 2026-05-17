@@ -1,15 +1,14 @@
-import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:re_editor/re_editor.dart';
-import 'package:re_highlight/languages/yaml.dart';
+import 'package:re_highlight/languages/json.dart';
 import 'package:re_highlight/styles/atom-one-light.dart';
-import 'package:yaml/yaml.dart';
 
 class RuntimeConfigFragment extends StatefulWidget {
   final Profile profile;
@@ -36,34 +35,35 @@ class _RuntimeConfigFragmentState extends State<RuntimeConfigFragment> {
 
   Future<void> _loadRuntimeConfig() async {
     try {
-      final config = context.read<Config>();
       final clashConfig = context.read<ClashConfig>();
-      final profilePath = await appPath.getProfilePath(widget.profile.id);
-      if (profilePath == null) {
+      final controller = clashConfig.externalController;
+      if (controller.isEmpty) {
         setState(() {
           _content = null;
           _isLoading = false;
-          _error = appLocalizations.nullProfileDesc;
+          _error = 'External controller is not enabled';
         });
         return;
       }
-      final file = File(profilePath);
-      if (!await file.exists()) {
+      final dio = Dio();
+      final response = await dio.get(
+        'http://$controller/configs',
+        options: Options(
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode != HttpStatus.ok || response.data == null) {
         setState(() {
           _content = null;
           _isLoading = false;
-          _error = appLocalizations.nullProfileDesc;
+          _error = 'Failed to fetch runtime config: ${response.statusCode}';
         });
         return;
       }
-      final yamlString = await file.readAsString();
-      final overrideDns = config.overrideDns;
-      final overrides = jsonDecode(jsonEncode(clashConfig.toJson()))
-          as Map<String, dynamic>;
-      final mergedYaml = _mergeAndEncodeYaml(yamlString, overrides, overrideDns);
+      final prettyJson = const JsonEncoder.withIndent('  ').convert(response.data);
       if (!mounted) return;
       setState(() {
-        _content = mergedYaml;
+        _content = prettyJson;
         _isLoading = false;
         _error = null;
       });
@@ -101,20 +101,20 @@ class _RuntimeConfigFragmentState extends State<RuntimeConfigFragment> {
         child: Text(appLocalizations.nullProfileDesc),
       );
     }
-    return _YamlViewer(content: _content!);
+    return _JsonViewer(content: _content!);
   }
 }
 
-class _YamlViewer extends StatefulWidget {
+class _JsonViewer extends StatefulWidget {
   final String content;
 
-  const _YamlViewer({required this.content});
+  const _JsonViewer({required this.content});
 
   @override
-  State<_YamlViewer> createState() => _YamlViewerState();
+  State<_JsonViewer> createState() => _JsonViewerState();
 }
 
-class _YamlViewerState extends State<_YamlViewer> {
+class _JsonViewerState extends State<_JsonViewer> {
   late final CodeLineEditingController _controller;
   final _focusNode = FocusNode();
 
@@ -163,251 +163,13 @@ class _YamlViewerState extends State<_YamlViewer> {
         fontSize: 14,
         codeTheme: CodeHighlightTheme(
           languages: {
-            'yaml': CodeHighlightThemeMode(mode: langYaml),
+            'json': CodeHighlightThemeMode(mode: langJson),
           },
           theme: atomOneLightTheme,
         ),
       ),
     );
   }
-}
-
-dynamic _yamlToNative(dynamic yaml) {
-  if (yaml is YamlMap) {
-    final map = <String, dynamic>{};
-    for (final entry in yaml.entries) {
-      map[entry.key.toString()] = _yamlToNative(entry.value);
-    }
-    return map;
-  } else if (yaml is YamlList) {
-    return yaml.map((e) => _yamlToNative(e)).toList();
-  } else {
-    return yaml;
-  }
-}
-
-String _mergeAndEncodeYaml(
-    String yamlString, Map<String, dynamic> overrides, bool overrideDns) {
-  final yamlDoc = loadYaml(yamlString);
-  if (yamlDoc == null) return '';
-  final config = _yamlToNative(yamlDoc);
-  if (config is! Map<String, dynamic>) return '';
-  _applyOverrides(config, overrides, overrideDns);
-  return _encodeYaml(config);
-}
-
-void _applyOverrides(Map<String, dynamic> config,
-    Map<String, dynamic> overrides, bool overrideDns) {
-  const directOverrideKeys = [
-    'mixed-port',
-    'allow-lan',
-    'mode',
-    'log-level',
-    'ipv6',
-    'find-process-mode',
-    'external-controller',
-    'keep-alive-interval',
-    'unified-delay',
-    'tcp-concurrent',
-    'geodata-loader',
-    'global-ua',
-  ];
-
-  for (final key in directOverrideKeys) {
-    final value = overrides[key];
-    if (value != null) {
-      config[key] = value;
-    }
-  }
-
-  config['port'] = 0;
-  config['socks-port'] = 0;
-  config['external-ui'] = '';
-  config['external-ui-url'] = '';
-  config['interface-name'] = '';
-
-  if (overrides['tun'] != null) {
-    final tunOverride = overrides['tun'] as Map<String, dynamic>;
-    final tun =
-        (config['tun'] as Map<String, dynamic>?) ?? <String, dynamic>{};
-    for (final entry in tunOverride.entries) {
-      tun[entry.key] = entry.value;
-    }
-    config['tun'] = tun;
-  }
-
-  if (overrideDns && overrides['dns'] != null) {
-    config['dns'] = overrides['dns'];
-  }
-
-  if (overrides['geox-url'] != null) {
-    config['geox-url'] = overrides['geox-url'];
-  }
-
-  if (overrides['hosts'] != null && (overrides['hosts'] as Map).isNotEmpty) {
-    final hosts =
-        (config['hosts'] as Map<String, dynamic>?) ?? <String, dynamic>{};
-    for (final entry in (overrides['hosts'] as Map<String, dynamic>).entries) {
-      hosts[entry.key] = entry.value;
-    }
-    config['hosts'] = hosts;
-  }
-
-  final profile =
-      (config['profile'] as Map<String, dynamic>?) ?? <String, dynamic>{};
-  profile['store-selected'] = false;
-  config['profile'] = profile;
-
-  if (overrides['udp'] == true) {
-    final proxies = config['proxies'] as List<dynamic>?;
-    if (proxies != null) {
-      for (final proxy in proxies) {
-        if (proxy is Map<String, dynamic>) {
-          proxy['udp'] = true;
-        }
-      }
-    }
-    final proxyGroups = config['proxy-groups'] as List<dynamic>?;
-    if (proxyGroups != null) {
-      for (final group in proxyGroups) {
-        if (group is Map<String, dynamic>) {
-          group['udp'] = true;
-        }
-      }
-    }
-    final proxyProviders = config['proxy-providers'] as Map<String, dynamic>?;
-    if (proxyProviders != null) {
-      for (final entry in proxyProviders.entries) {
-        if (entry.value is Map<String, dynamic>) {
-          final provider = entry.value as Map<String, dynamic>;
-          final override =
-              provider['override'] as Map<String, dynamic>? ??
-                  <String, dynamic>{};
-          override['udp'] = true;
-          provider['override'] = override;
-        }
-      }
-    }
-  }
-}
-
-String _encodeYaml(dynamic value, {int indent = 0}) {
-  final buffer = StringBuffer();
-  _writeYamlValue(buffer, value, indent, false);
-  return buffer.toString();
-}
-
-void _writeYamlValue(
-    StringBuffer buffer, dynamic value, int indent, bool isInList) {
-  if (value is Map) {
-    _writeYamlMap(buffer, value, indent, isInList);
-  } else if (value is List) {
-    _writeYamlList(buffer, value, indent, isInList);
-  } else {
-    buffer.write(_formatScalar(value));
-  }
-}
-
-void _writeYamlMap(
-    StringBuffer buffer, Map map, int indent, bool isInList) {
-  final entries = map.entries.toList();
-  for (var i = 0; i < entries.length; i++) {
-    final entry = entries[i];
-    final key = entry.key;
-    final value = entry.value;
-
-    if (i > 0 || !isInList) {
-      buffer.write('${'  ' * indent}$key:');
-    } else {
-      buffer.write('$key:');
-    }
-
-    if (value is Map || value is List) {
-      buffer.writeln();
-      _writeYamlValue(buffer, value, indent + 1, false);
-    } else {
-      buffer.writeln(' ${_formatScalar(value)}');
-    }
-  }
-}
-
-void _writeYamlList(
-    StringBuffer buffer, List list, int indent, bool isInList) {
-  for (var i = 0; i < list.length; i++) {
-    final item = list[i];
-    final prefix = '${'  ' * indent}- ';
-
-    if (item is Map) {
-      final entries = item.entries.toList();
-      if (entries.isEmpty) {
-        buffer.writeln('$prefix{}');
-        continue;
-      }
-      buffer.write(prefix);
-      buffer.write('${entries.first.key}:');
-      final firstValue = entries.first.value;
-      if (firstValue is Map || firstValue is List) {
-        buffer.writeln();
-        _writeYamlValue(buffer, firstValue, indent + 2, false);
-      } else {
-        buffer.writeln(' ${_formatScalar(firstValue)}');
-      }
-      for (var j = 1; j < entries.length; j++) {
-        final entry = entries[j];
-        buffer.write('${'  ' * (indent + 1)}${entry.key}:');
-        final v = entry.value;
-        if (v is Map || v is List) {
-          buffer.writeln();
-          _writeYamlValue(buffer, v, indent + 2, false);
-        } else {
-          buffer.writeln(' ${_formatScalar(v)}');
-        }
-      }
-    } else if (item is List) {
-      buffer.writeln(prefix);
-      _writeYamlValue(buffer, item, indent + 1, false);
-    } else {
-      buffer.writeln('$prefix${_formatScalar(item)}');
-    }
-  }
-}
-
-String _formatScalar(dynamic value) {
-  if (value == null) return 'null';
-  if (value is bool) return value ? 'true' : 'false';
-  if (value is int || value is double) return value.toString();
-  if (value is String) {
-    if (value.isEmpty) return '""';
-    if (value.contains('\n') ||
-        value.contains(': ') ||
-        value.contains(' #') ||
-        value.startsWith('- ') ||
-        value.startsWith('!') ||
-        value.startsWith('&') ||
-        value.startsWith('*') ||
-        value.startsWith('?') ||
-        value.startsWith('{') ||
-        value.startsWith('}') ||
-        value.startsWith('[') ||
-        value.startsWith(']') ||
-        value.startsWith(',') ||
-        value.startsWith('@') ||
-        value.startsWith('`') ||
-        value.startsWith('"') ||
-        value.startsWith("'") ||
-        value == 'true' ||
-        value == 'false' ||
-        value == 'null' ||
-        _looksLikeNumber(value)) {
-      return '"${value.replaceAll('\\', '\\\\').replaceAll('"', '\\"').replaceAll('\n', '\\n')}"';
-    }
-    return value;
-  }
-  return value.toString();
-}
-
-bool _looksLikeNumber(String s) {
-  return double.tryParse(s) != null;
 }
 
 class LongPressDetector extends StatefulWidget {
@@ -427,27 +189,23 @@ class LongPressDetector extends StatefulWidget {
 }
 
 class _LongPressDetectorState extends State<LongPressDetector> {
-  Timer? _timer;
+  Stopwatch? _stopwatch;
 
   void _onPointerDown(PointerDownEvent event) {
-    _timer?.cancel();
-    _timer = Timer(widget.duration, widget.onLongPress);
+    _stopwatch = Stopwatch()..start();
   }
 
   void _onPointerUp(PointerUpEvent event) {
-    _timer?.cancel();
-    _timer = null;
+    if (_stopwatch != null && _stopwatch!.elapsed >= widget.duration) {
+      widget.onLongPress();
+    }
+    _stopwatch?.stop();
+    _stopwatch = null;
   }
 
   void _onPointerCancel(PointerCancelEvent event) {
-    _timer?.cancel();
-    _timer = null;
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
+    _stopwatch?.stop();
+    _stopwatch = null;
   }
 
   @override
