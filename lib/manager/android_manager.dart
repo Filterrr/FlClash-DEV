@@ -58,26 +58,11 @@ class _AndroidContainerState extends State<AndroidManager> {
     );
   }
 
-  Widget _deepSleepContainer(Widget child) {
-    return Selector<Config, bool>(
-      selector: (_, config) => config.vpnProps.deepSleep,
-      builder: (_, deepSleep, child) {
-        if (!deepSleep) {
-          app?.requestIgnoreBatteryOptimization();
-        }
-        return child!;
-      },
-      child: child,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return _updateCoreState(
-      _deepSleepContainer(
-        _excludeContainer(
-          widget.child,
-        ),
+      _excludeContainer(
+        widget.child,
       ),
     );
   }
