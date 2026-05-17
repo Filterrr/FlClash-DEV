@@ -940,7 +940,6 @@ mixin _$VpnProps {
   bool get systemProxy => throw _privateConstructorUsedError;
   bool get ipv6 => throw _privateConstructorUsedError;
   bool get allowBypass => throw _privateConstructorUsedError;
-  bool get deepSleep => throw _privateConstructorUsedError;
 
   /// Serializes this VpnProps to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -957,7 +956,7 @@ abstract class $VpnPropsCopyWith<$Res> {
   factory $VpnPropsCopyWith(VpnProps value, $Res Function(VpnProps) then) =
       _$VpnPropsCopyWithImpl<$Res, VpnProps>;
   @useResult
-  $Res call({bool enable, bool systemProxy, bool ipv6, bool allowBypass, bool deepSleep});
+  $Res call({bool enable, bool systemProxy, bool ipv6, bool allowBypass});
 }
 
 /// @nodoc
@@ -979,7 +978,6 @@ class _$VpnPropsCopyWithImpl<$Res, $Val extends VpnProps>
     Object? systemProxy = null,
     Object? ipv6 = null,
     Object? allowBypass = null,
-    Object? deepSleep = null,
   }) {
     return _then(_value.copyWith(
       enable: null == enable
@@ -998,10 +996,6 @@ class _$VpnPropsCopyWithImpl<$Res, $Val extends VpnProps>
           ? _value.allowBypass
           : allowBypass // ignore: cast_nullable_to_non_nullable
               as bool,
-      deepSleep: null == deepSleep
-          ? _value.deepSleep
-          : deepSleep // ignore: cast_nullable_to_non_nullable
-              as bool,
     ) as $Val);
   }
 }
@@ -1014,7 +1008,7 @@ abstract class _$$VpnPropsImplCopyWith<$Res>
       __$$VpnPropsImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({bool enable, bool systemProxy, bool ipv6, bool allowBypass, bool deepSleep});
+  $Res call({bool enable, bool systemProxy, bool ipv6, bool allowBypass});
 }
 
 /// @nodoc
@@ -1034,7 +1028,6 @@ class __$$VpnPropsImplCopyWithImpl<$Res>
     Object? systemProxy = null,
     Object? ipv6 = null,
     Object? allowBypass = null,
-    Object? deepSleep = null,
   }) {
     return _then(_$VpnPropsImpl(
       enable: null == enable
@@ -1053,10 +1046,6 @@ class __$$VpnPropsImplCopyWithImpl<$Res>
           ? _value.allowBypass
           : allowBypass // ignore: cast_nullable_to_non_nullable
               as bool,
-      deepSleep: null == deepSleep
-          ? _value.deepSleep
-          : deepSleep // ignore: cast_nullable_to_non_nullable
-              as bool,
     ));
   }
 }
@@ -1068,8 +1057,7 @@ class _$VpnPropsImpl implements _VpnProps {
       {this.enable = true,
       this.systemProxy = true,
       this.ipv6 = false,
-      this.allowBypass = true,
-      this.deepSleep = false});
+      this.allowBypass = true});
 
   factory _$VpnPropsImpl.fromJson(Map<String, dynamic> json) =>
       _$$VpnPropsImplFromJson(json);
@@ -1086,13 +1074,10 @@ class _$VpnPropsImpl implements _VpnProps {
   @override
   @JsonKey()
   final bool allowBypass;
-  @override
-  @JsonKey()
-  final bool deepSleep;
 
   @override
   String toString() {
-    return 'VpnProps(enable: $enable, systemProxy: $systemProxy, ipv6: $ipv6, allowBypass: $allowBypass, deepSleep: $deepSleep)';
+    return 'VpnProps(enable: $enable, systemProxy: $systemProxy, ipv6: $ipv6, allowBypass: $allowBypass)';
   }
 
   @override
@@ -1105,15 +1090,13 @@ class _$VpnPropsImpl implements _VpnProps {
                 other.systemProxy == systemProxy) &&
             (identical(other.ipv6, ipv6) || other.ipv6 == ipv6) &&
             (identical(other.allowBypass, allowBypass) ||
-                other.allowBypass == allowBypass) &&
-            (identical(other.deepSleep, deepSleep) ||
-                other.deepSleep == deepSleep));
+                other.allowBypass == allowBypass));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
-      Object.hash(runtimeType, enable, systemProxy, ipv6, allowBypass, deepSleep);
+      Object.hash(runtimeType, enable, systemProxy, ipv6, allowBypass);
 
   /// Create a copy of VpnProps
   /// with the given fields replaced by the non-null parameter values.
@@ -1136,8 +1119,7 @@ abstract class _VpnProps implements VpnProps {
       {final bool enable,
       final bool systemProxy,
       final bool ipv6,
-      final bool allowBypass,
-      final bool deepSleep}) = _$VpnPropsImpl;
+      final bool allowBypass}) = _$VpnPropsImpl;
 
   factory _VpnProps.fromJson(Map<String, dynamic> json) =
       _$VpnPropsImpl.fromJson;
@@ -1150,8 +1132,6 @@ abstract class _VpnProps implements VpnProps {
   bool get ipv6;
   @override
   bool get allowBypass;
-  @override
-  bool get deepSleep;
 
   /// Create a copy of VpnProps
   /// with the given fields replaced by the non-null parameter values.

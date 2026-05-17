@@ -158,12 +158,6 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Discovery a new version"),
         "dnsDesc":
             MessageLookupByLibrary.simpleMessage("Update DNS related settings"),
-        "dnsHijack": MessageLookupByLibrary.simpleMessage("DNS hijack"),
-        "dnsHijackDesc": MessageLookupByLibrary.simpleMessage(
-            "Redirect DNS resolution to the internal DNS module"),
-        "deepSleep": MessageLookupByLibrary.simpleMessage("Deep sleep"),
-        "deepSleepDesc": MessageLookupByLibrary.simpleMessage(
-            "When enabled, sync with system Doze mode to save battery, VPN may be interrupted during sleep"),
         "dnsMode": MessageLookupByLibrary.simpleMessage("DNS mode"),
         "doYouWantToPass":
             MessageLookupByLibrary.simpleMessage("Do you want to pass"),
