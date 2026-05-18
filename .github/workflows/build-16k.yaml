@@ -6,6 +6,10 @@ on:
     tags:
       - 'v*'
 
+# 【修复】加回全局环境变量，否则 upload 任务中的 env.IS_STABLE 无法识别，导致 Release 被跳过
+env:
+  IS_STABLE: ${{ !contains(github.ref, '-') }}
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -101,14 +105,15 @@ jobs:
           channel: ${{ matrix.flutter_channel }}
           cache: true
           cache-key: flutter-${{ matrix.platform }}-${{ matrix.arch }}-${{ hashFiles('**/pubspec.lock') }}
-          flutter-version: '3.x'
+          # 【优化】动态读取矩阵中定义的特定版本，若未定义（如 Android）则默认回退到 '3.x'
+          flutter-version: ${{ matrix.flutter_version || '3.x' }}
 
       - name: Prepare Dependencies
         run: |
           flutter pub get
           dart run build_runner build -d || true
 
-      # 【新增】针对 Android 平台强制升级 Flutter 扫码插件中不符合 16K 标准的闭源依赖
+      # 针对 Android 平台强制升级 Flutter 扫码插件中不符合 16K 标准的闭源依赖
       - name: Force 16K Google Dependencies (CameraX & ML Kit)
         if: matrix.is_android == true
         run: |
@@ -130,7 +135,7 @@ jobs:
           }
           EOF
 
-      # 【新增】针对 Android 平台全局注入 Go 语言的 16K 链接器环境变量
+      # 针对 Android 平台全局注入 Go 语言的 16K 链接器环境变量
       - name: Inject 16K Page Size for Go (Android)
         if: matrix.is_android == true
         run: echo "CGO_LDFLAGS=-Wl,-z,max-page-size=16384" >> $GITHUB_ENV
@@ -182,7 +187,8 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: ./dist/
-          pattern: artifact-*
+          # 【修复】将匹配模式改为 FlClash-*，以正确下载 build 任务中上传的产物
+          pattern: FlClash-*
           merge-multiple: true
 
       - name: Generate sha256
