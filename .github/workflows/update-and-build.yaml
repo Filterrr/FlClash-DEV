@@ -369,11 +369,6 @@ jobs:
   upload:
     permissions: write-all
     needs: [build, check-update, update-and-test]
-    # 核心限制：仅在明确发布版本（推送 tag 或手动输入指定 tag_name 构建）并且编译成功时才会运行发布到 Release 流程
-    if: >-
-      always() &&
-      needs.build.result == 'success' &&
-      (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.tag_name != ''))
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
