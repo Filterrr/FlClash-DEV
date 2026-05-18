@@ -369,6 +369,8 @@ jobs:
   upload:
     permissions: write-all
     needs: [build, check-update, update-and-test]
+    # 只要多平台编译（build）成功，即触发 Release 发布流程（去掉了事件类型和指定 tag_name 的核心限制）
+    if: always() && needs.build.result == 'success'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
