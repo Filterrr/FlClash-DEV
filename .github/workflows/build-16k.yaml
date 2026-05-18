@@ -6,9 +6,9 @@ on:
     tags:
       - 'v*'
 
-# 【修复】加回全局环境变量，否则 upload 任务中的 env.IS_STABLE 无法识别，导致 Release 被跳过
 env:
-  IS_STABLE: ${{ !contains(github.ref, '-') }}
+  RELEASE_TAG: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || inputs.tag_name }}
+  IS_STABLE: ${{ (startsWith(github.ref, 'refs/tags/') && !contains(github.ref, '-')) || (inputs.tag_name != '' && !contains(inputs.tag_name, '-')) }}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -203,5 +203,6 @@ jobs:
         if: ${{ env.IS_STABLE == 'true' }}
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ env.RELEASE_TAG }}
           files: ./dist/*
-          generate_release_notes: true
+          body_path: './release.md'
