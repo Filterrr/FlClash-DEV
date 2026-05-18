@@ -167,3 +167,61 @@ jobs:
           name: FlClash-${{ matrix.platform }}${{ matrix.arch && format('-{0}', matrix.arch) || '' }}
           path: ./dist
           overwrite: true
+
+  upload:
+    permissions: write-all
+    needs: [ build ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download
+        uses: actions/download-artifact@v4
+        with:
+          path: ./dist/
+          pattern: artifact-*
+          merge-multiple: true
+
+      - name: Generate release.md
+        run: |
+          tags=($(git tag --merged HEAD --sort=-creatordate))
+          preTag=$(curl -s "https://api.github.com/repos/myflavor/FlClash/releases/latest" | \
+          sed -nE 's/.*"tag_name": "([^"]+)".*/\1/p')
+          
+          [ -z "$preTag" ] && preTag=""
+          
+          out="release.md" > "$out"
+          
+          for i in "${!tags[@]}"; do
+            curr="${tags[i]}"
+            [[ "$curr" == "$preTag" ]] && break
+          
+            prev="${tags[i+1]}"
+            range="${prev:+$prev..}$curr"
+          
+            git log --no-merges --pretty=format:"%B" "$range" | \
+            awk '!/Update changelog/ && NF {print "- " $0 "\n"}' >> "$out"
+          done
+
+      - name: Patch release.md
+        run: |
+          version=$(echo "${{ github.ref_name }}" | sed 's/^v//')
+          sed "s|VERSION|$version|g" ./.github/release_template.md >> release.md
+
+      - name: Generate sha256
+        if: env.IS_STABLE == 'true'
+        run: |
+          cd ./dist
+          for file in $(find . -type f -not -name "*.sha256"); do
+            sha256sum "$file" > "${file}.sha256"
+          done  
+
+      - name: Release
+        if: ${{ env.IS_STABLE == 'true' }}
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ./dist/*
+          body_path: './release.md'
