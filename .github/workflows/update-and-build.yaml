@@ -1,4 +1,4 @@
-name: Update Core and Build
+name: Update Core and Multi-Platform Build
 
 on:
   schedule:
@@ -13,6 +13,11 @@ on:
         description: 'Target branch to update (default: Alpha, ignored if commit is provided)'
         required: false
         default: 'Alpha'
+      tag_name:
+        description: 'Release tag (leave empty if just updating core or using build time)'
+        required: false
+        type: string
+        default: ''
   push:
     tags:
       - 'v*'
@@ -24,10 +29,13 @@ concurrency:
 env:
   SUBMODULE_PATH: core/Clash.Meta
   DEFAULT_BRANCH: Alpha
+  RELEASE_TAG: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || inputs.tag_name }}
+  IS_STABLE: ${{ (startsWith(github.ref, 'refs/tags/') && !contains(github.ref, '-')) || (inputs.tag_name != '' && !contains(inputs.tag_name, '-')) }}
 
 jobs:
   check-update:
-    if: github.event_name == 'workflow_dispatch'
+    # 仅在定时触发，或者手动触发且未指定发布 tag_name 时，执行内核更新检查
+    if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.tag_name == '')
     runs-on: ubuntu-latest
     outputs:
       has_update: ${{ steps.check.outputs.has_update }}
@@ -89,6 +97,16 @@ jobs:
             echo "No updates found."
           fi
 
+  notify-no-update:
+    needs: check-update
+    if: needs.check-update.outputs.has_update == 'false'
+    runs-on: ubuntu-latest
+    steps:
+      - name: No Update Needed
+        run: |
+          echo "Clash.Meta core is already up to date."
+          echo "Current commit: ${{ needs.check-update.outputs.old_commit_short }} (${{ needs.check-update.outputs.old_commit }})"
+
   update-and-test:
     needs: check-update
     if: needs.check-update.outputs.has_update == 'true'
@@ -111,13 +129,9 @@ jobs:
       - name: Update Submodule
         run: |
           git submodule update --init ${{ env.SUBMODULE_PATH }}
-
           cd ${{ env.SUBMODULE_PATH }}
-
           git fetch origin
-
           git checkout ${{ needs.check-update.outputs.new_commit }}
-
           echo "Clash.Meta current commit: $(git rev-parse HEAD)"
 
           echo "## Update Log" > /tmp/update_log.md
@@ -193,10 +207,14 @@ jobs:
 
   build:
     needs: [check-update, update-and-test]
+    # 触发构建的情况：1. 推送 tag； 2. 手动触发且填了 tag_name； 3. 定时或手动更新内核成功后测试新分支编译
     if: >-
       always() &&
-      ((github.event_name == 'push') ||
-       (github.event_name == 'workflow_dispatch' && needs.update-and-test.result == 'success'))
+      (
+        (github.event_name == 'push') ||
+        (github.event_name == 'workflow_dispatch' && inputs.tag_name != '') ||
+        ((github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && needs.update-and-test.result == 'success')
+      )
     name: Build ${{ matrix.platform }}${{ matrix.arch && format('-{0}', matrix.arch) || '' }}
     runs-on: ${{ matrix.os }}
     strategy:
@@ -239,7 +257,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && needs.check-update.outputs.branch_name || github.ref }}
+          # 如果是内核更新触发的编译，自动切到更新分支测试；如果是发布触发，切到当前 ref
+          ref: ${{ ((github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && needs.check-update.outputs.has_update == 'true') && needs.check-update.outputs.branch_name || github.ref }}
           submodules: recursive
           fetch-depth: 1
 
@@ -283,7 +302,7 @@ jobs:
           channel: ${{ matrix.flutter_channel }}
           cache: true
           cache-key: flutter-${{ matrix.platform }}-${{ matrix.arch }}-${{ hashFiles('**/pubspec.lock') }}
-          flutter-version: '3.x'
+          flutter-version: ${{ matrix.flutter_version || '3.x' }}
 
       - name: Prepare Dependencies
         run: |
@@ -347,12 +366,46 @@ jobs:
           path: ./dist
           overwrite: true
 
-  notify-no-update:
-    needs: check-update
-    if: needs.check-update.outputs.has_update == 'false'
+  upload:
+    permissions: write-all
+    needs: [build, check-update, update-and-test]
+    # 核心限制：仅在明确发布版本（推送 tag 或手动输入指定 tag_name 构建）并且编译成功时才会运行发布到 Release 流程
+    if: >-
+      always() &&
+      needs.build.result == 'success' &&
+      (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.tag_name != ''))
     runs-on: ubuntu-latest
     steps:
-      - name: No Update Needed
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set Build Time Tag if Empty
         run: |
-          echo "Clash.Meta core is already up to date."
-          echo "Current commit: ${{ needs.check-update.outputs.old_commit_short }} (${{ needs.check-update.outputs.old_commit }})"
+          if [ -z "$RELEASE_TAG" ]; then
+            BUILD_TAG="v$(date +'%Y%m%d-%H%M%S')"
+            echo "RELEASE_TAG=${BUILD_TAG}" >> $GITHUB_ENV
+            echo "IS_STABLE=true" >> $GITHUB_ENV
+            echo "⚠️ 检测到未指定标签，已自动生成构建时间标签: ${BUILD_TAG}"
+          fi
+
+      - name: Download
+        uses: actions/download-artifact@v4
+        with:
+          path: ./dist/
+          pattern: FlClash-*
+          merge-multiple: true
+
+      - name: Remove Android v4 Signature Files (.idsig)
+        run: |
+          echo "🧹 开始清理多余的签名辅助文件..."
+          rm -f ./dist/*.idsig
+
+      - name: Release
+        if: ${{ env.IS_STABLE == 'true' || env.RELEASE_TAG != '' }}
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.RELEASE_TAG }}
+          files: ./dist/*
+          body_path: './release.md'
