@@ -172,7 +172,7 @@ jobs:
           name: FlClash-${{ matrix.platform }}${{ matrix.arch && format('-{0}', matrix.arch) || '' }}
           path: ./dist
           overwrite: true
-          
+
   upload:
     permissions: write-all
     needs: [ build ]
@@ -183,16 +183,27 @@ jobs:
         with:
           fetch-depth: 0
 
+      # 【新增】在此步骤动态判断并生成 Tag 名字
+      - name: Set Release Tag
+        run: |
+          if [ "${{ github.ref_type }}" = "tag" ]; then
+            echo "TAG_NAME=${{ github.ref_name }}" >> $GITHUB_ENV
+          else
+            # 手动运行时，获取北京时间 (UTC+8) 的构建时间戳作为 Tag (格式如：v20260518-153022)
+            TAG_TIME=$(TZ='Asia/Shanghai' date +'%Y%m%d-%H%M%S')
+            echo "TAG_NAME=v${TAG_TIME}" >> $GITHUB_ENV
+          fi
+
       - name: Download
         uses: actions/download-artifact@v4
         with:
           path: ./dist/
-          # 【修复】将匹配模式改为 FlClash-*，以正确下载 build 任务中上传的产物
+          # 【修复】修正匹配模式为 FlClash-*，确保能成功下载到上面 build 打包好的文件
           pattern: FlClash-*
           merge-multiple: true
 
+      # 【优化】去掉了 env.IS_STABLE 限制，确保手动触发和 Tag 触发都能统一生成哈希校验并发布
       - name: Generate sha256
-        if: env.IS_STABLE == 'true'
         run: |
           cd ./dist
           for file in $(find . -type f -not -name "*.sha256"); do
@@ -200,9 +211,9 @@ jobs:
           done  
 
       - name: Release
-        if: ${{ env.IS_STABLE == 'true' }}
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ env.RELEASE_TAG }}
+          # 【修复】显式传入计算好的时间戳或 Git Tag，彻底解决 requires a tag 报错
+          tag_name: ${{ env.TAG_NAME }}
           files: ./dist/*
-          body_path: './release.md'
+          generate_release_notes: true
