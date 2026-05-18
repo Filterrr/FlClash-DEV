@@ -111,6 +111,7 @@ jobs:
 
       - name: Maximize Compression (Non-Android)
         if: "!startsWith(matrix.platform,'android')"
+        shell: bash
         run: |
           cd dist
           for f in *.zip; do
