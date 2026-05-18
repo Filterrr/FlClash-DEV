@@ -317,6 +317,43 @@ jobs:
       - name: Build Platform
         run: dart setup.dart ${{ matrix.platform }} ${{ matrix.arch && format('--arch {0}', matrix.arch) || '' }}
 
+      - name: Maximize Compression
+        shell: bash
+        run: |
+          cd dist
+          for f in *.apk *.zip; do
+            if [ -f "$f" ]; then
+              echo "Re-compressing $f with max level..."
+              tmpdir=$(mktemp -d)
+              unzip -q "$f" -d "$tmpdir"
+              rm "$f"
+              cd "$tmpdir"
+              zip -9 -r "$OLDPWD/$f" . -x '*.DS_Store'
+              cd "$OLDPWD"
+              rm -rf "$tmpdir"
+            fi
+          done
+          for f in *.deb; do
+            if [ -f "$f" ]; then
+              echo "Re-compressing $f with max level..."
+              tmpdir=$(mktemp -d)
+              cd "$tmpdir"
+              ar x "$OLDPWD/$f"
+              for data in data.tar.* control.tar.*; do
+                if [ -f "$data" ] && [ "${data##*.}" = "gz" ]; then
+                  mv "$data" "$data.tmp"
+                  gzip -9 -c "$data.tmp" > "$data"
+                  rm "$data.tmp"
+                fi
+              done
+              ar rcs "$OLDPWD/$f" debian-binary control.tar.* data.tar.*
+              cd "$OLDPWD"
+              rm -rf "$tmpdir"
+            fi
+          done
+          echo "Done. Final sizes:"
+          ls -lh
+
       - name: Sign Android APKs with Fixed Keystore
         if: matrix.is_android == true
         env:
@@ -346,6 +383,7 @@ jobs:
           name: FlClash-${{ matrix.platform }}${{ matrix.arch && format('-{0}', matrix.arch) || '' }}
           path: ./dist
           overwrite: true
+          compression-level: 9
 
   notify-no-update:
     needs: check-update
