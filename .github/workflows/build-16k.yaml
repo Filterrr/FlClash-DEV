@@ -205,7 +205,10 @@ jobs:
           pattern: FlClash-*
           merge-multiple: true
 
-      # 【修改】已完全移除 "Generate sha256" 步骤，避免生成和上传非安装包文件
+      - name: Remove Android v4 Signature Files (.idsig)
+        run: |
+          echo "🧹 开始清理多余的签名辅助文件..."
+          rm -f ./dist/*.idsig
 
       - name: Release
         if: ${{ env.IS_STABLE == 'true' }}
