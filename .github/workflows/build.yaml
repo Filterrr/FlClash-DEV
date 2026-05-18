@@ -83,12 +83,76 @@ jobs:
       - name: Setup
         run: dart setup.dart ${{ matrix.platform }} ${{ matrix.arch && format('--arch {0}', matrix.arch) }}
 
+      - name: Maximize Compression & Re-sign APKs
+        if: startsWith(matrix.platform,'android')
+        run: |
+          cd dist
+          for f in *.apk; do
+            if [ -f "$f" ]; then
+              echo "Re-compressing $f with max level..."
+              tmpdir=$(mktemp -d)
+              unzip -q "$f" -d "$tmpdir"
+              rm "$f"
+              cd "$tmpdir"
+              zip -9 -r "$OLDPWD/$f" . -x '*.DS_Store'
+              cd "$OLDPWD"
+              rm -rf "$tmpdir"
+              echo "Re-signing $f..."
+              APKSIGNER=$(find $ANDROID_HOME/build-tools -name apksigner | grep -v "\.bat$" | sort -r | head -n 1)
+              $APKSIGNER sign --ks android/app/keystore.jks \
+                --ks-key-alias "${{ secrets.KEY_ALIAS }}" \
+                --ks-pass "pass:${{ secrets.STORE_PASSWORD }}" \
+                --key-pass "pass:${{ secrets.KEY_PASSWORD }}" \
+                "$f"
+            fi
+          done
+          echo "Done. Final sizes:"
+          ls -lh
+
+      - name: Maximize Compression (Non-Android)
+        if: "!startsWith(matrix.platform,'android')"
+        run: |
+          cd dist
+          for f in *.zip; do
+            if [ -f "$f" ]; then
+              echo "Re-compressing $f with max level..."
+              tmpdir=$(mktemp -d)
+              unzip -q "$f" -d "$tmpdir"
+              rm "$f"
+              cd "$tmpdir"
+              zip -9 -r "$OLDPWD/$f" . -x '*.DS_Store'
+              cd "$OLDPWD"
+              rm -rf "$tmpdir"
+            fi
+          done
+          for f in *.deb; do
+            if [ -f "$f" ]; then
+              echo "Re-compressing $f with max level..."
+              tmpdir=$(mktemp -d)
+              cd "$tmpdir"
+              ar x "$OLDPWD/$f"
+              for data in data.tar.* control.tar.*; do
+                if [ -f "$data" ] && [ "${data##*.}" = "gz" ]; then
+                  mv "$data" "$data.tmp"
+                  gzip -9 -c "$data.tmp" > "$data"
+                  rm "$data.tmp"
+                fi
+              done
+              ar rcs "$OLDPWD/$f" debian-binary control.tar.* data.tar.*
+              cd "$OLDPWD"
+              rm -rf "$tmpdir"
+            fi
+          done
+          echo "Done. Final sizes:"
+          ls -lh
+
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
           name: artifact-${{ matrix.platform }}${{ matrix.arch && format('-{0}', matrix.arch) }}
           path: ./dist
           overwrite: true
+          compression-level: 9
 
   changelog:
     runs-on: ubuntu-latest
