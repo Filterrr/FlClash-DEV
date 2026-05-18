@@ -138,7 +138,26 @@ jobs:
       - name: Build Platform
         run: dart setup.dart ${{ matrix.platform }} ${{ matrix.arch && format('--arch {0}', matrix.arch) || '' }}
 
-      - name: Maximize Compression
+      - name: Maximize Compression (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          Set-Location dist
+          Get-ChildItem -Filter *.zip | ForEach-Object {
+            $f = $_.Name
+            Write-Host "Re-compressing $f with max level..."
+            $tmpdir = Join-Path $env:TEMP "recompress-$(Get-Random)"
+            New-Item -ItemType Directory -Path $tmpdir -Force | Out-Null
+            Expand-Archive -Path $f -DestinationPath $tmpdir -Force
+            Remove-Item $f -Force
+            Compress-Archive -Path "$tmpdir\*" -DestinationPath $f -CompressionLevel Optimal -Force
+            Remove-Item $tmpdir -Recurse -Force
+          }
+          Write-Host "Done. Final sizes:"
+          Get-ChildItem | Format-Table Name, Length
+
+      - name: Maximize Compression (Unix)
+        if: runner.os != 'Windows'
         shell: bash
         run: |
           cd dist
