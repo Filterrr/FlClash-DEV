@@ -10,7 +10,7 @@ on:
       branch:
         description: 'Target branch to update (default: Meta, ignored if commit is provided)'
         required: false
-        default: 'Meta'
+        default: 'Alpha'
       tag_name:
         description: 'Release tag (leave empty if just updating core or using build time)'
         required: false
@@ -26,7 +26,7 @@ concurrency:
 
 env:
   SUBMODULE_PATH: core/Clash.Meta
-  DEFAULT_BRANCH: Meta
+  DEFAULT_BRANCH: Alpha
   RELEASE_TAG: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || inputs.tag_name }}
   IS_STABLE: ${{ (startsWith(github.ref, 'refs/tags/') && !contains(github.ref, '-')) || (inputs.tag_name != '' && !contains(inputs.tag_name, '-')) }}
 
