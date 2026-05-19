@@ -41,7 +41,8 @@ dependencies:
   dio: ^5.4.3+1
   win32: ^5.5.1
   ffi: ^2.1.2
-  re_editor: ^0.6.0
+  re_editor:
+    path: packages/re_editor
   re_highlight: ^0.0.3
   archive: ^3.6.1
   lpinyin: ^2.0.3
