@@ -229,33 +229,33 @@ jobs:
             flutter_channel: 'stable'
 
           - platform: windows
-            os: windows-latest
+            os: windows-2022
             arch: amd64
             go_version: '1.25.x'
             flutter_channel: 'stable'
             flutter_version: '3.38.10'
           - platform: windows
-            os: windows-latest
+            os: windows-2022
             arch: arm64
             go_version: '1.25.x'
             flutter_channel: 'stable'
             flutter_version: '3.38.10'
 
           - platform: macos
-            os: macos-latest
+            os: macos-15
             arch: arm64
             go_version: '1.25.x'
             flutter_channel: 'stable'
             flutter_version: '3.38.10'
           - platform: macos
-            os: macos-latest
+            os: macos-15
             arch: amd64
             go_version: '1.25.x'
             flutter_channel: 'stable'
             flutter_version: '3.38.10'
 
           - platform: linux
-            os: ubuntu-latest
+            os: ubuntu-22.04
             arch: amd64
             go_version: '1.25.x'
             flutter_channel: 'stable'
